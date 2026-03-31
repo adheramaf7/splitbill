@@ -6,7 +6,7 @@ import { Metadata } from "next"
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "New Split Bill Session",
+  title: "Bill Information",
 }
 
 const Page = () => {
@@ -14,7 +14,7 @@ const Page = () => {
     <div className="flex flex-col gap-4">
       <section>
         <p className="text-xs text-muted-foreground">Step 1 of 4</p>
-        <p className="text-sm">Create new split bill session.</p>
+        <p className="text-sm">Fill general bill information.</p>
       </section>
       <FieldGroup className="flex flex-col gap-4">
         <Field>
@@ -32,7 +32,7 @@ const Page = () => {
         </Field>
         <Link href={"/new-session/xxxx-1/items"}>
           <Button type="button" size={"lg"} className="w-full">
-            Create New Session <ArrowRightIcon />
+            Next Step <ArrowRightIcon />
           </Button>
         </Link>
       </FieldGroup>
