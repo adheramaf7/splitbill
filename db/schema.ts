@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, index, varchar, uuid, primaryKey } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -91,3 +91,90 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+export const splitBills = pgTable("split_bills", (t) => ({
+  id: t.uuid("id").defaultRandom().primaryKey(),
+  name: t.varchar("name").notNull(),
+  date: t.timestamp("date").notNull(),
+  isDraft: t.boolean('is_draft').default(true).notNull(),
+  total: t.numeric("total").notNull(),
+  createdAt: t.timestamp("created_at").defaultNow().notNull(),
+  updatedAt: t.timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+  userId: t.text("user_id")
+    .references(() => users.id, { onDelete: "cascade" }),
+}));
+
+export const billParticipants = pgTable('bill_participants', (t) => {
+  return {
+    id: t.uuid("id").defaultRandom().primaryKey(),
+    name: t.varchar("name").notNull(),
+    splitBillId: t.uuid("split_bill_id")
+      .notNull()
+      .references(() => splitBills.id, { onDelete: "cascade" }),
+    userId: t.text("user_id")
+      .references(() => users.id, { onDelete: "cascade" }),
+  }
+})
+
+export const billItems = pgTable('bill_items', (t) => {
+  return {
+    id: t.uuid("id").defaultRandom().primaryKey(),
+    name: t.varchar("name").notNull(),
+    price: t.numeric("price").notNull(),
+    quantity: t.integer("quantity").notNull(),
+    splitBillId: t.uuid("split_bill_id")
+      .notNull()
+      .references(() => splitBills.id, { onDelete: "cascade" }),
+  }
+})
+
+export const billItemParticipants = pgTable('bill_item_participants', (t) => {
+  return {
+    billItemId: t.uuid("bill_item_id")
+      .notNull()
+      .references(() => billItems.id, { onDelete: "cascade" }),
+    billParticipantId: t.uuid("bill_participant_id")
+      .notNull()
+      .references(() => billParticipants.id, { onDelete: "cascade" }),
+    type: t.text('type', { enum: ['quantity', 'percentage', 'nominal'] }),
+    value: t.numeric("value").notNull(), // for storing quantity, percentage, amount
+    total: t.numeric("total").notNull(), // for storing total amount from item
+  }
+}, (t) => {
+  return [
+    primaryKey({ columns: [t.billItemId, t.billParticipantId] })
+  ]
+})
+
+export const splitBillsRelation = relations(splitBills, ({ many }) => ({
+  billItems: many(billItems),
+  billParticipants: many(billParticipants),
+}))
+
+export const billItemsRelation = relations(billItems, ({ one }) => ({
+  splitBill: one(splitBills, {
+    fields: [billItems.splitBillId],
+    references: [splitBills.id],
+  }),
+}))
+
+export const billParticipantsRelation = relations(billParticipants, ({ one }) => ({
+  splitBill: one(splitBills, {
+    fields: [billParticipants.splitBillId],
+    references: [splitBills.id],
+  }),
+}))
+
+export const billItemParticipantsRelation = relations(billItemParticipants, ({ one }) => ({
+  billItem: one(billItems, {
+    fields: [billItemParticipants.billItemId],
+    references: [billItems.id],
+  }),
+  billParticipant: one(billParticipants, {
+    fields: [billItemParticipants.billParticipantId],
+    references: [billParticipants.id],
+  }),
+}))
