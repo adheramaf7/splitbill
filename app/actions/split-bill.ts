@@ -22,6 +22,18 @@ export async function createSplitBill(formData: FormData) {
   redirect(`/new-session/${splitBill.id}/items`)
 }
 
+export async function updateSplitBill(id: string, formData: FormData) {
+  const billName = formData.get('name') as string;
+  const date = formData.get('date') as string;
+
+  await db.update(splitBills).set({
+    name: billName,
+    date: new Date(date),
+  }).where(eq(splitBills.id, id));
+
+  redirect(`/new-session/${id}/items`)
+}
+
 export type BillItem = typeof billItems.$inferSelect;
 export type BillParticipant = typeof billParticipants.$inferSelect;
 export type SplitBill = typeof splitBills.$inferSelect;

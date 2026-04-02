@@ -1,28 +1,10 @@
 import { getSplitBillById } from "@/app/actions/split-bill"
 import { Button } from "@/components/ui/button"
-import { ButtonGroup } from "@/components/ui/button-group"
-import { Field, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from "@/components/ui/input-group"
-import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  EditIcon,
-  MinusIcon,
-  PlusCircleIcon,
-  PlusIcon,
-  Trash2Icon,
-  UserPlusIcon,
-  XIcon,
-} from "lucide-react"
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react"
 import { Metadata } from "next"
 import Link from "next/link"
-import PageContent from "./page.content"
+import ParticipantsSection from "./components/participants-section"
+import ItemsSection from "./components/items-section"
 
 export const metadata: Metadata = {
   title: "Input Participant and Items",
@@ -40,13 +22,42 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         <p className="text-sm">Input participants and items.</p>
       </section>
 
-      <p className="my-5">BILL ID: {splitBill.id}</p>
+      {/* <p className="my-5">BILL ID: {splitBill.id}</p> */}
 
-      <PageContent
-        splitBillId={splitBill.id}
+      <ParticipantsSection
+        splitBillId={id}
         participants={splitBill.billParticipants}
-        items={splitBill.billItems}
       />
+
+      <ItemsSection splitBillId={id} items={splitBill.billItems} />
+
+      <div className="mb-6 flex flex-col items-center rounded-md bg-secondary p-4 text-secondary-foreground">
+        <p className="text-xs font-medium text-secondary-foreground/50">
+          Total Bills
+        </p>
+        <p className="text-lg font-semibold">
+          {Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+          }).format(
+            splitBill.billItems.reduce(
+              (acc, item) => acc + Number(item.price) * Number(item.quantity),
+              0
+            )
+          )}
+        </p>
+      </div>
+
+      <div className="flex justify-between">
+        <Link href={`/new-session/${id}/info`}>
+          <Button type="button" variant={"outline"} size={"lg"}>
+            <ArrowLeftIcon /> Prev
+          </Button>
+        </Link>
+        <Button type="button" size={"lg"}>
+          Next <ArrowRightIcon />
+        </Button>
+      </div>
     </div>
   )
 }
