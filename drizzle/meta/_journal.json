@@ -15,6 +15,13 @@
       "when": 1775018552224,
       "tag": "0001_lazy_clint_barton",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775110951681,
+      "tag": "0002_peaceful_polaris",
+      "breakpoints": true
     }
   ]
 }

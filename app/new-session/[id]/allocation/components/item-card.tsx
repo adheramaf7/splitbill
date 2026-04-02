@@ -1,0 +1,322 @@
+"use client"
+
+import { BillItem } from "@/app/actions/split-bill"
+import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import {
+  Edit2Icon,
+  PercentCircleIcon,
+  PercentIcon,
+  PieChartIcon,
+  UserPlusIcon,
+  XIcon,
+} from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import { BillParticipant } from "@/app/actions/split-bill"
+import { Input } from "@/components/ui/input"
+import { BillItemParticipant } from "@/app/actions/bill-item-participant"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group"
+import { AllocationBadgeSatus } from "./allocation-badge-status"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
+type AllocationType = BillItemParticipant["type"]
+
+type ParticipantProportion = Record<string, string>
+
+const getParticipantProportionTotal = (
+  item: BillItem,
+  allocationType: AllocationType,
+  allocationValue: number
+): number => {
+  if (allocationType === "percentage") {
+    return (Number(item.price) * item.quantity * allocationValue) / 100
+  }
+
+  return Number(item.price) * allocationValue
+}
+
+const ItemCard = ({
+  item,
+  participants,
+  allocations,
+}: {
+  item: BillItem
+  participants: BillParticipant[]
+  allocations: BillItemParticipant[]
+}) => {
+  const [openForm, setOpenForm] = useState(false)
+  const [allocationType, setAllocationType] = useState<AllocationType>(null)
+  const [participantProportion, setParticipantProportion] =
+    useState<ParticipantProportion>(
+      participants.reduce((acc, p) => {
+        acc[p.id] = "0"
+        return acc
+      }, {} as ParticipantProportion)
+    )
+
+  const toggleForm = () => {
+    setOpenForm((prev) => !prev)
+  }
+
+  useEffect(() => {
+    initializeAllocation()
+  }, [])
+
+  const initializeAllocation = () => {
+    if (allocations.length === 0) {
+      initWithDefaultAllocation()
+    } else {
+      initWithExistingAllocation()
+    }
+  }
+
+  const initWithDefaultAllocation = () => {
+    const defaultAllocationType =
+      item.quantity === 1 ? "percentage" : "quantity"
+
+    setAllocationType(defaultAllocationType)
+
+    if (defaultAllocationType === "percentage") {
+      let sum = 0
+      setParticipantProportion(
+        participants.reduce((acc, p, index) => {
+          if (index === participants.length - 1) {
+            acc[p.id] = (100 - sum).toString()
+          } else {
+            const val = Number((100 / participants.length).toFixed(0))
+            sum += val
+            acc[p.id] = val.toString()
+          }
+          return acc
+        }, {} as ParticipantProportion)
+      )
+    }
+  }
+
+  const initWithExistingAllocation = () => {}
+
+  const allocatedBill = useMemo<number>(() => {
+    return Object.entries(participantProportion).reduce((acc, [key, value]) => {
+      return (
+        acc + getParticipantProportionTotal(item, allocationType, Number(value))
+      )
+    }, 0)
+  }, [participantProportion])
+
+  const changeAllocationType = (type: AllocationType) => {
+    setAllocationType(type)
+
+    //reset all to zero
+    setParticipantProportion(
+      participants.reduce((acc, p) => {
+        acc[p.id] = "0"
+        return acc
+      }, {} as ParticipantProportion)
+    )
+  }
+
+  const unselectedParticipants = useMemo<BillParticipant[]>(() => {
+    return participants.filter(
+      (p) => !Object.keys(participantProportion).includes(p.id)
+    )
+  }, [participants, participantProportion])
+
+  return (
+    <div className="flex flex-col rounded-md border px-2 pt-2 pb-4">
+      <div className="mb-3 flex items-start justify-between">
+        <div>
+          <p className="text-lg font-semibold">{item.name}</p>
+          <p className="text-sm text-muted-foreground">
+            {Intl.NumberFormat("id-ID", {
+              style: "decimal",
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }).format(Number(item.price))}{" "}
+            x {item.quantity}
+          </p>
+        </div>
+        <p className="text-lg font-semibold text-primary">
+          {Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+          }).format(Number(item.price) * item.quantity)}
+        </p>
+      </div>
+      <div className="flex flex-row items-center justify-between">
+        <AllocationBadgeSatus item={item} allocations={allocations} />
+        <Button
+          type="button"
+          variant={"secondary"}
+          size={"sm"}
+          onClick={toggleForm}
+        >
+          {openForm ? <XIcon /> : <Edit2Icon />}
+          {openForm ? "Close" : "Set Allocation"}
+        </Button>
+      </div>
+      {openForm && (
+        <section className="mt-3">
+          <hr className="border-dashed" />
+          <p className="mt-2 mb-2 text-sm font-medium">Allocation Method</p>
+          <ButtonGroup orientation="horizontal" aria-label="Quantity controls">
+            <Button
+              type="button"
+              variant={allocationType === "percentage" ? "default" : "outline"}
+              size={"sm"}
+              onClick={() => changeAllocationType("percentage")}
+            >
+              <PercentCircleIcon /> Percentage
+            </Button>
+            <Button
+              type="button"
+              variant={allocationType === "quantity" ? "default" : "outline"}
+              size={"sm"}
+              onClick={() => changeAllocationType("quantity")}
+            >
+              <PieChartIcon /> Quantity
+            </Button>
+          </ButtonGroup>
+
+          <div className="mt-4 mb-2 flex items-center justify-between">
+            <p className="text-sm font-medium">Allocate to</p>
+            {unselectedParticipants.length > 0 && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button type="button" variant={"outline"} size={"sm"}>
+                    <UserPlusIcon /> Add Participant
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <div className="flex flex-wrap gap-2">
+                    {unselectedParticipants.map((participant) => (
+                      <Button
+                        type="button"
+                        variant={"outline"}
+                        key={participant.id}
+                        onClick={() => {
+                          setParticipantProportion((prev) => {
+                            return { ...prev, [participant.id]: "" }
+                          })
+                        }}
+                      >
+                        {participant.name}
+                      </Button>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+          <div className="flex flex-col gap-2">
+            {Object.entries(participantProportion).map(
+              ([participantID, proportionValue]) => {
+                const participant = participants.find(
+                  (p) => p.id === participantID
+                )
+                return (
+                  <div
+                    key={participantID}
+                    className="flex flex-col rounded-md border p-2"
+                  >
+                    <div className="mb-3 flex items-start justify-between">
+                      <p className="text-sm font-semibold">
+                        {participant?.name || "Unknown"}
+                      </p>
+                      <Button
+                        type="button"
+                        variant={"destructive"}
+                        size={"icon-sm"}
+                        onClick={() => {
+                          setParticipantProportion((prev) => {
+                            const newParticipantProportion = { ...prev }
+                            delete newParticipantProportion[participantID]
+                            return newParticipantProportion
+                          })
+                        }}
+                      >
+                        <XIcon />
+                      </Button>
+                    </div>
+                    <div className="flex justify-between">
+                      <p className="text-sm font-semibold text-primary">
+                        {Intl.NumberFormat("id-ID", {
+                          style: "currency",
+                          currency: "IDR",
+                        }).format(
+                          getParticipantProportionTotal(
+                            item,
+                            allocationType,
+                            Number(proportionValue)
+                          )
+                        )}
+                      </p>
+                      {allocationType === "percentage" && (
+                        <InputGroup className="max-w-[30%]">
+                          <InputGroupAddon align={"inline-end"}>
+                            <PercentIcon />
+                          </InputGroupAddon>
+                          <InputGroupInput
+                            type="number"
+                            min={0}
+                            max={100}
+                            value={proportionValue}
+                            onChange={(e) => {
+                              setParticipantProportion((prev) => ({
+                                ...prev,
+                                [participantID]: e.target.value,
+                              }))
+                            }}
+                          />
+                        </InputGroup>
+                      )}
+
+                      {allocationType === "quantity" && (
+                        <Input
+                          className="max-w-[30%]"
+                          type="number"
+                          min={0}
+                          max={item.quantity}
+                          value={proportionValue}
+                          onChange={(e) => {
+                            setParticipantProportion((prev) => ({
+                              ...prev,
+                              [participantID]: e.target.value,
+                            }))
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
+                )
+              }
+            )}
+          </div>
+
+          <div className="mt-4 flex items-center justify-between">
+            <p className="font-medium">Allocated bill</p>
+            <p className="font-medium text-primary">
+              {Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+              }).format(allocatedBill)}
+            </p>
+          </div>
+
+          <Button type="button" className="mt-4 w-full">
+            Save Allocation
+          </Button>
+        </section>
+      )}
+    </div>
+  )
+}
+
+export default ItemCard

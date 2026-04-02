@@ -68,7 +68,7 @@ const ItemsSection = ({
   }
 
   return (
-    <section id="item-section" className="mb-4">
+    <section id="item-section">
       <div className="flex items-center justify-between gap-2">
         <p className="mb-2 font-medium">Receipt Items</p>
         <p className="mb-2 text-xs text-muted-foreground">

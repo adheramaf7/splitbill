@@ -128,6 +128,11 @@ export const billItems = pgTable('bill_items', (t) => {
     splitBillId: t.uuid("split_bill_id")
       .notNull()
       .references(() => splitBills.id, { onDelete: "cascade" }),
+    createdAt: t.timestamp("created_at").defaultNow().notNull(),
+    updatedAt: t.timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
   }
 })
 

@@ -5,6 +5,8 @@ import { Metadata } from "next"
 import Link from "next/link"
 import ParticipantsSection from "./components/participants-section"
 import ItemsSection from "./components/items-section"
+import Navigation from "./components/navigation"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 export const metadata: Metadata = {
   title: "Input Participant and Items",
@@ -16,21 +18,28 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const splitBill = await getSplitBillById(id)
 
   return (
-    <div className="flex flex-col">
+    <>
       <section className="mb-4">
         <p className="text-xs text-muted-foreground">Step 2 of 4</p>
         <p className="text-sm">Input participants and items.</p>
       </section>
+      <ScrollArea className="mb-4 flex flex-1 flex-col overflow-y-auto">
+        {/* <p className="my-5">BILL ID: {splitBill.id}</p> */}
 
-      {/* <p className="my-5">BILL ID: {splitBill.id}</p> */}
+        <ParticipantsSection
+          splitBillId={id}
+          participants={splitBill.billParticipants.sort((a, b) =>
+            a.name.localeCompare(b.name)
+          )}
+        />
 
-      <ParticipantsSection
-        splitBillId={id}
-        participants={splitBill.billParticipants}
-      />
-
-      <ItemsSection splitBillId={id} items={splitBill.billItems} />
-
+        <ItemsSection
+          splitBillId={id}
+          items={splitBill.billItems.sort(
+            (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+          )}
+        />
+      </ScrollArea>
       <div className="mb-6 flex flex-col items-center rounded-md bg-secondary p-4 text-secondary-foreground">
         <p className="text-xs font-medium text-secondary-foreground/50">
           Total Bills
@@ -47,18 +56,14 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
           )}
         </p>
       </div>
-
-      <div className="flex justify-between">
-        <Link href={`/new-session/${id}/info`}>
-          <Button type="button" variant={"outline"} size={"lg"}>
-            <ArrowLeftIcon /> Prev
-          </Button>
-        </Link>
-        <Button type="button" size={"lg"}>
-          Next <ArrowRightIcon />
-        </Button>
-      </div>
-    </div>
+      <Navigation
+        splitBillId={id}
+        nextActionDisabled={
+          splitBill.billItems.length === 0 ||
+          splitBill.billParticipants.length === 0
+        }
+      />
+    </>
   )
 }
 
