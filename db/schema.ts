@@ -97,7 +97,9 @@ export const splitBills = pgTable("split_bills", (t) => ({
   name: t.varchar("name").notNull(),
   date: t.timestamp("date").notNull(),
   isDraft: t.boolean('is_draft').default(true).notNull(),
-  total: t.numeric("total").notNull(),
+  total: t.numeric("total"),
+  totalAdjustments: t.numeric("total_adjustments"),
+  grandTotal: t.numeric('grand_total'),
   createdAt: t.timestamp("created_at").defaultNow().notNull(),
   updatedAt: t.timestamp("updated_at")
     .defaultNow()
@@ -114,8 +116,29 @@ export const billParticipants = pgTable('bill_participants', (t) => {
     splitBillId: t.uuid("split_bill_id")
       .notNull()
       .references(() => splitBills.id, { onDelete: "cascade" }),
+    totalBill: t.numeric('total_bill'),
+    adjustments: t.json('adjustments'),
+    finalAmount: t.numeric('final_amount'),
     userId: t.text("user_id")
       .references(() => users.id, { onDelete: "cascade" }),
+  }
+})
+
+export const billAdjustments = pgTable('bill_adjustments', (t) => {
+  return {
+    id: t.uuid("id").defaultRandom().primaryKey(),
+    name: t.varchar("name").notNull(),
+    type: t.text('type', { enum: ['additional', 'discount'] }).notNull(),
+    percentage: t.numeric("percentage"),
+    amount: t.numeric("amount").notNull(),
+    splitBillId: t.uuid("split_bill_id")
+      .notNull()
+      .references(() => splitBills.id, { onDelete: "cascade" }),
+    createdAt: t.timestamp("created_at").defaultNow().notNull(),
+    updatedAt: t.timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
   }
 })
 
@@ -125,6 +148,8 @@ export const billItems = pgTable('bill_items', (t) => {
     name: t.varchar("name").notNull(),
     price: t.numeric("price").notNull(),
     quantity: t.integer("quantity").notNull(),
+    discount: t.numeric("discount").default('0').notNull(),
+    total: t.numeric("total").notNull(),
     splitBillId: t.uuid("split_bill_id")
       .notNull()
       .references(() => splitBills.id, { onDelete: "cascade" }),
@@ -144,7 +169,7 @@ export const billItemParticipants = pgTable('bill_item_participants', (t) => {
     billParticipantId: t.uuid("bill_participant_id")
       .notNull()
       .references(() => billParticipants.id, { onDelete: "cascade" }),
-    type: t.text('type', { enum: ['quantity', 'percentage', 'nominal'] }),
+    type: t.text('type', { enum: ['quantity', 'percentage', 'nominal'] }).notNull(),
     value: t.numeric("value").notNull(), // for storing quantity, percentage, amount
     total: t.numeric("total").notNull(), // for storing total amount from item
   }

@@ -4,6 +4,7 @@ import { BillItem } from "@/app/actions/split-bill"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import {
+  DollarSignIcon,
   Edit2Icon,
   Loader2Icon,
   PercentCircleIcon,
@@ -47,6 +48,10 @@ const getParticipantProportionTotal = (
     return (Number(item.price) * item.quantity * allocationValue) / 100
   }
 
+  if (allocationType === "nominal") {
+    return allocationValue
+  }
+
   return Number(item.price) * allocationValue
 }
 
@@ -65,7 +70,8 @@ const ItemCard = ({
   allocations: BillItemParticipant[]
 }) => {
   const [openForm, setOpenForm] = useState(false)
-  const [allocationType, setAllocationType] = useState<AllocationType>(null)
+  const [allocationType, setAllocationType] =
+    useState<AllocationType>("quantity")
   const [participantProportion, setParticipantProportion] =
     useState<ParticipantProportion>(
       participants.reduce((acc, p) => {
@@ -262,6 +268,14 @@ const ItemCard = ({
               onClick={() => changeAllocationType("quantity")}
             >
               <PieChartIcon /> Quantity
+            </Button>
+            <Button
+              type="button"
+              variant={allocationType === "nominal" ? "default" : "outline"}
+              size={"sm"}
+              onClick={() => changeAllocationType("nominal")}
+            >
+              <DollarSignIcon /> Amount
             </Button>
           </ButtonGroup>
 
