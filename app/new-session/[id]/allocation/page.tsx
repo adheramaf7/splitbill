@@ -31,9 +31,12 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
     return {
       id: item.id,
-      status: determineAllocationStatusItem({ item, allocations }),
+      isAllocated:
+        determineAllocationStatusItem({ item, allocations }) === "Allocated",
     }
   })
+
+  console.info("billItemParticipants", billItemParticipants)
 
   return (
     <>
@@ -61,7 +64,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         splitBillId={id}
         nextActionDisabled={
           billItemParticipants.length === 0 ||
-          billItemsAllocationStatus.every((e) => e.status !== "Allocated")
+          billItemsAllocationStatus.some((e) => !e.isAllocated)
         }
       />
     </>

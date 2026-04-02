@@ -5,16 +5,20 @@ import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import {
   Edit2Icon,
+  Loader2Icon,
   PercentCircleIcon,
   PercentIcon,
   PieChartIcon,
   UserPlusIcon,
   XIcon,
 } from "lucide-react"
-import { useEffect, useMemo, useState } from "react"
+import { useActionState, useEffect, useMemo, useState } from "react"
 import { BillParticipant } from "@/app/actions/split-bill"
 import { Input } from "@/components/ui/input"
-import { BillItemParticipant } from "@/app/actions/bill-item-participant"
+import {
+  BillItemParticipant,
+  saveBillItemParticipant,
+} from "@/app/actions/bill-item-participant"
 import {
   InputGroup,
   InputGroupAddon,
@@ -26,6 +30,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { success } from "zod"
+import { toast } from "sonner"
+import { id } from "zod/v4/locales"
 
 type AllocationType = BillItemParticipant["type"]
 
@@ -41,6 +48,11 @@ const getParticipantProportionTotal = (
   }
 
   return Number(item.price) * allocationValue
+}
+
+type ActionState = {
+  success?: boolean
+  error?: string
 }
 
 const ItemCard = ({
@@ -61,6 +73,47 @@ const ItemCard = ({
         return acc
       }, {} as ParticipantProportion)
     )
+
+  const [formState, formAction, formPending] = useActionState<
+    ActionState,
+    FormData
+  >(async (_, formData) => {
+    try {
+      const participantProportionPayload = Object.entries(
+        participantProportion
+      ).map(([participantId, value]) => {
+        return {
+          participantId: participantId,
+          type: allocationType,
+          value: Number(value),
+          total: getParticipantProportionTotal(
+            item,
+            allocationType,
+            Number(value)
+          ),
+        }
+      })
+
+      return await saveBillItemParticipant({
+        splitBillId: item.splitBillId,
+        billItemId: item.id,
+        participantProportions: participantProportionPayload,
+      })
+    } catch (error) {
+      return {
+        success: false,
+        error: "Failed to save allocation.",
+      }
+    }
+  }, {})
+
+  useEffect(() => {
+    if (formState.success === true && !formPending) {
+      setOpenForm(false)
+    } else if (formState.success === false && !formPending) {
+      toast.error(formState.error)
+    }
+  }, [formState, formPending])
 
   const toggleForm = () => {
     setOpenForm((prev) => !prev)
@@ -101,7 +154,17 @@ const ItemCard = ({
     }
   }
 
-  const initWithExistingAllocation = () => {}
+  const initWithExistingAllocation = () => {
+    const allocationType = allocations[0].type
+    setAllocationType(allocationType)
+
+    setParticipantProportion(
+      allocations.reduce((acc, a) => {
+        acc[a.billParticipantId] = a.value.toString()
+        return acc
+      }, {} as ParticipantProportion)
+    )
+  }
 
   const allocatedBill = useMemo<number>(() => {
     return Object.entries(participantProportion).reduce((acc, [key, value]) => {
@@ -129,8 +192,25 @@ const ItemCard = ({
     )
   }, [participants, participantProportion])
 
+  const handleSubmit = async (formData: FormData) => {
+    if (Object.entries(participantProportion).some(([id, value]) => !value)) {
+      toast.error("Please fill all allocation values.")
+      return
+    }
+
+    if (allocatedBill !== Number(item.price) * item.quantity) {
+      toast.error("Allocated bill must be equal to total bill.")
+      return
+    }
+
+    formAction(formData)
+  }
+
   return (
-    <div className="flex flex-col rounded-md border px-2 pt-2 pb-4">
+    <form
+      action={handleSubmit}
+      className="flex flex-col rounded-md border px-2 pt-2 pb-4"
+    >
       <div className="mb-3 flex items-start justify-between">
         <div>
           <p className="text-lg font-semibold">{item.name}</p>
@@ -265,9 +345,10 @@ const ItemCard = ({
                           </InputGroupAddon>
                           <InputGroupInput
                             type="number"
-                            min={0}
+                            min={1}
                             max={100}
                             value={proportionValue}
+                            required
                             onChange={(e) => {
                               setParticipantProportion((prev) => ({
                                 ...prev,
@@ -282,9 +363,11 @@ const ItemCard = ({
                         <Input
                           className="max-w-[30%]"
                           type="number"
-                          min={0}
+                          min={1}
                           max={item.quantity}
                           value={proportionValue}
+                          name={`participants[${participantID}]`}
+                          required
                           onChange={(e) => {
                             setParticipantProportion((prev) => ({
                               ...prev,
@@ -310,12 +393,19 @@ const ItemCard = ({
             </p>
           </div>
 
-          <Button type="button" className="mt-4 w-full">
-            Save Allocation
+          <Button type="submit" className="mt-4 w-full" disabled={formPending}>
+            {formPending ? (
+              <>
+                <Loader2Icon className="animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save Allocation"
+            )}
           </Button>
         </section>
       )}
-    </div>
+    </form>
   )
 }
 
