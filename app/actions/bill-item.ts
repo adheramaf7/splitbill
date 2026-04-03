@@ -46,19 +46,12 @@ export async function updateBillItem(id: string, formData: FormData) {
   const quantity = formData.get("quantity") as string
   const discount = formData.get("discount") as string
 
-  const hasChanged =
-    existing.name !== name ||
+  const priceQuantityDiscountChanged =
     existing.price !== price ||
     existing.quantity !== Number(quantity) ||
     existing.discount !== (discount || '0')
 
-  if (!hasChanged) {
-    return {
-      success: true,
-    }
-  }
-
-  const updatedItem = await db.update(billItems).set({
+  await db.update(billItems).set({
     name,
     price,
     quantity: Number(quantity),
@@ -67,7 +60,9 @@ export async function updateBillItem(id: string, formData: FormData) {
     total: ((Number(price) * Number(quantity)) - Number(discount || '0')).toString(),
   }).where(eq(billItems.id, id))
 
-  await deleteBillItemParticipantByItem(id);
+  if (priceQuantityDiscountChanged) {
+    await deleteBillItemParticipantByItem(id);
+  }
 
   revalidatePath(`/new-session`)
 
