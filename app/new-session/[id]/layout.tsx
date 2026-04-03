@@ -1,8 +1,21 @@
+import { getSplitBillById } from "@/app/actions/split-bill"
+import { redirect } from "next/navigation"
 import React from "react"
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
-  //TODO: do checking for split bill that already submitted to be redirected into summary page.
+export default async function Layout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+
+  const splitBill = await getSplitBillById(id)
+
+  if (!splitBill.isDraft) {
+    redirect(`/split-bill/${id}`)
+  }
+
   return <>{children}</>
 }
-
-export default Layout

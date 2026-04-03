@@ -24,9 +24,9 @@ const Navigation = ({ splitBillId, nextActionDisabled }: Props) => {
         type="button"
         size={"lg"}
         disabled={nextActionDisabled}
-        onClick={() => router.push(`/new-session/${splitBillId}/summary`)}
+        onClick={() => router.push(`/new-session/${splitBillId}/adjustment`)}
       >
-        Summary <ArrowRightIcon />
+        Next <ArrowRightIcon />
       </Button>
     </div>
   )

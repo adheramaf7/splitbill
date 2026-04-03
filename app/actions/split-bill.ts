@@ -45,6 +45,7 @@ export async function getSplitBillById(id: string): Promise<SplitBill & { billIt
     with: {
       billItems: true,
       billParticipants: true,
+      billAdjustments: true,
     },
   });
 

@@ -184,6 +184,7 @@ export const billItemParticipants = pgTable('bill_item_participants', (t) => {
 export const splitBillsRelation = relations(splitBills, ({ many }) => ({
   billItems: many(billItems),
   billParticipants: many(billParticipants),
+  billAdjustments: many(billAdjustments),
 }))
 
 export const billItemsRelation = relations(billItems, ({ one }) => ({
@@ -196,6 +197,12 @@ export const billItemsRelation = relations(billItems, ({ one }) => ({
 export const billParticipantsRelation = relations(billParticipants, ({ one }) => ({
   splitBill: one(splitBills, {
     fields: [billParticipants.splitBillId],
+    references: [splitBills.id],
+  }),
+}))
+export const billAdjustmentsRelation = relations(billAdjustments, ({ one }) => ({
+  splitBill: one(splitBills, {
+    fields: [billAdjustments.splitBillId],
     references: [splitBills.id],
   }),
 }))
