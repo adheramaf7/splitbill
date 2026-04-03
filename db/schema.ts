@@ -118,6 +118,7 @@ export const billParticipants = pgTable('bill_participants', (t) => {
       .references(() => splitBills.id, { onDelete: "cascade" }),
     totalBill: t.numeric('total_bill'),
     adjustments: t.json('adjustments'),
+    totalAdjustments: t.numeric('total_adjustments'),
     finalAmount: t.numeric('final_amount'),
     userId: t.text("user_id")
       .references(() => users.id, { onDelete: "cascade" }),
@@ -148,6 +149,7 @@ export const billItems = pgTable('bill_items', (t) => {
     name: t.varchar("name").notNull(),
     price: t.numeric("price").notNull(),
     quantity: t.integer("quantity").notNull(),
+    subTotal: t.numeric("sub_total").notNull(),
     discount: t.numeric("discount").default('0').notNull(),
     total: t.numeric("total").notNull(),
     splitBillId: t.uuid("split_bill_id")

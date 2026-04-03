@@ -17,7 +17,7 @@ export const determineAllocationStatusItem = ({
     return "Unallocated"
   }
 
-  if (allocated === Number(item.price) * item.quantity) {
+  if (allocated === Number(item.total)) {
     return "Allocated"
   }
 

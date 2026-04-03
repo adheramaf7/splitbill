@@ -22,6 +22,27 @@
       "when": 1775110951681,
       "tag": "0002_peaceful_polaris",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1775178951801,
+      "tag": "0003_chunky_shocker",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1775179276860,
+      "tag": "0004_previous_nighthawk",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1775185425218,
+      "tag": "0005_robust_sebastian_shaw",
+      "breakpoints": true
     }
   ]
 }

@@ -36,12 +36,10 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     }
   })
 
-  console.info("billItemParticipants", billItemParticipants)
-
   return (
     <>
       <section className="mb-4">
-        <p className="text-xs text-muted-foreground">Step 3 of 4</p>
+        <p className="text-xs text-muted-foreground">Step 2 of 4</p>
         <p className="text-sm">Input items allocation.</p>
       </section>
       <section className="mb-6 flex flex-1 flex-col gap-2 overflow-y-auto">

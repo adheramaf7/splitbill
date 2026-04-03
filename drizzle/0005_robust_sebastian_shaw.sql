@@ -1,0 +1,1 @@
+ALTER TABLE "bill_items" ADD COLUMN "sub_total" numeric NOT NULL;

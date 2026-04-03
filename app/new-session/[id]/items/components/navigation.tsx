@@ -1,9 +1,8 @@
-"use client"
-
+import { updateSplitBillTotal } from "@/app/actions/split-bill"
+import SubmitButton from "@/app/new-session/components/submit-button"
 import { Button } from "@/components/ui/button"
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 
 type Props = {
   splitBillId: string
@@ -11,24 +10,20 @@ type Props = {
 }
 
 const Navigation = ({ splitBillId, nextActionDisabled }: Props) => {
-  const router = useRouter()
-
   return (
-    <div className="flex justify-between">
-      <Link href={`/new-session/${splitBillId}/info`}>
-        <Button type="button" variant={"outline"} size={"lg"}>
-          <ArrowLeftIcon /> Prev
-        </Button>
-      </Link>
-      <Button
-        type="button"
-        size={"lg"}
-        disabled={nextActionDisabled}
-        onClick={() => router.push(`/new-session/${splitBillId}/allocation`)}
-      >
-        Next <ArrowRightIcon />
-      </Button>
-    </div>
+    <form action={updateSplitBillTotal.bind(null, splitBillId)}>
+      <div className="flex justify-between">
+        <Link href={`/new-session/${splitBillId}/info`}>
+          <Button type="button" variant={"outline"} size={"lg"}>
+            <ArrowLeftIcon /> Prev
+          </Button>
+        </Link>
+
+        <SubmitButton loadingText="Processing..." disabled={nextActionDisabled}>
+          <ArrowRightIcon /> Next Step
+        </SubmitButton>
+      </div>
+    </form>
   )
 }
 

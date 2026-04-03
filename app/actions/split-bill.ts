@@ -1,8 +1,9 @@
 'use server';
 
 import { db } from "@/db";
-import { billItems, billParticipants, splitBills } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { billItemParticipants, billItems, billParticipants, splitBills } from "@/db/schema";
+import { eq, inArray } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 
 export async function createSplitBill(formData: FormData) {
@@ -52,4 +53,32 @@ export async function getSplitBillById(id: string): Promise<SplitBill & { billIt
   }
 
   return result;
+}
+
+export async function updateSplitBillTotal(id: string) {
+  const itemsData = await db.query.billItems.findMany({
+    where: eq(billItems.splitBillId, id),
+  });
+
+  const total = itemsData.reduce((acc, item) => acc + Number(item.total), 0);
+
+  await db.update(splitBills).set({
+    total: `${total}`,
+    grandTotal: `${total}`,
+  }).where(eq(splitBills.id, id));
+
+
+  revalidatePath(`/new-session`);
+
+  redirect(`/new-session/${id}/allocation`);
+}
+
+export async function resetSplitBillAllocations(splitBillId: string) {
+  const itemsData = await db.query.billItems.findMany({
+    where: eq(billItems.splitBillId, splitBillId),
+  });
+
+  if (itemsData.length > 0) {
+    await db.delete(billItemParticipants).where(inArray(billItemParticipants.billItemId, itemsData.map((item) => item.id)));
+  }
 }

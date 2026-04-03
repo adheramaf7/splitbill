@@ -213,7 +213,7 @@ const ItemCard = ({ item, onEdit }: { item: BillItem; onEdit: () => void }) => {
         </div>
       </div>
       <hr className="my-2 border-dashed border-muted" />
-      <div className="flex items-end justify-between">
+      <div className="grid grid-cols-3 items-end gap-8">
         <div className="flex items-center gap-2">
           <ButtonGroup orientation="horizontal" aria-label="Quantity controls">
             <Button
@@ -254,13 +254,22 @@ const ItemCard = ({ item, onEdit }: { item: BillItem; onEdit: () => void }) => {
             <Loader2Icon className="animate-spin text-gray-300" size={18} />
           )}
         </div>
-        <div className="flex flex-col items-end gap-1">
+        <div className="flex flex-col items-start gap-1">
           <p className="text-xs text-muted-foreground">Price</p>
           <p className="text-sm font-medium">
             {Intl.NumberFormat("id-ID", {
               style: "currency",
               currency: "IDR",
             }).format(Number(item.price))}
+          </p>
+        </div>
+        <div className="flex flex-col items-start gap-1">
+          <p className="text-xs text-muted-foreground">Discount</p>
+          <p className="text-sm font-medium">
+            {Intl.NumberFormat("id-ID", {
+              style: "currency",
+              currency: "IDR",
+            }).format(Number(item.discount))}
           </p>
         </div>
       </div>
@@ -334,7 +343,7 @@ const FormCard = ({
           required
         />
       </Field>
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-5 gap-2">
         <Field className="col-span-1">
           <FieldLabel htmlFor="item_qty">Quantity</FieldLabel>
           <Input
@@ -347,7 +356,7 @@ const FormCard = ({
             required
           />
         </Field>
-        <Field className="col-span-3">
+        <Field className="col-span-2">
           <FieldLabel htmlFor="item_price">Price</FieldLabel>
           <Input
             id="item_price"
@@ -356,6 +365,18 @@ const FormCard = ({
             min={1}
             name="price"
             defaultValue={existingItem?.price}
+            required
+          />
+        </Field>
+        <Field className="col-span-2">
+          <FieldLabel htmlFor="item_discount">Discount</FieldLabel>
+          <Input
+            id="item_discount"
+            type="number"
+            autoComplete="off"
+            min={0}
+            name="discount"
+            defaultValue={existingItem?.discount}
             required
           />
         </Field>

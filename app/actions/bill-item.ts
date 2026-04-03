@@ -1,6 +1,6 @@
 'use server'
 
-import { BillItem } from "@/app/actions/split-bill"
+import { resetSplitBillAllocations } from "@/app/actions/split-bill"
 import { db } from "@/db"
 import { billItems } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -10,13 +10,19 @@ export async function createBillItem(splitBillId: string, formData: FormData) {
   const name = formData.get("name") as string
   const price = formData.get("price") as string
   const quantity = formData.get("quantity") as string
+  const discount = formData.get("discount") as string
 
   const result = await db.insert(billItems).values({
     name,
     price,
     quantity: Number(quantity),
     splitBillId,
+    discount: discount || '0',
+    subTotal: (Number(price) * Number(quantity)).toString(),
+    total: ((Number(price) * Number(quantity)) - Number(discount || '0')).toString(),
   })
+
+  await resetSplitBillAllocations(splitBillId)
 
   revalidatePath(`/new-session`)
 
@@ -29,12 +35,20 @@ export async function updateBillItem(id: string, formData: FormData) {
   const name = formData.get("name") as string
   const price = formData.get("price") as string
   const quantity = formData.get("quantity") as string
+  const discount = formData.get("discount") as string
 
-  await db.update(billItems).set({
+  const updatedItem = await db.update(billItems).set({
     name,
     price,
     quantity: Number(quantity),
-  }).where(eq(billItems.id, id))
+    discount: discount || '0',
+    subTotal: (Number(price) * Number(quantity)).toString(),
+    total: ((Number(price) * Number(quantity)) - Number(discount || '0')).toString(),
+  }).where(eq(billItems.id, id)).returning()
+
+  if (updatedItem.length > 0) {
+    await resetSplitBillAllocations(updatedItem[0].splitBillId)
+  }
 
   revalidatePath(`/new-session`)
 
@@ -58,9 +72,26 @@ export async function updateQuantity(id: string, newQuantity: number) {
     return await deleteBillItemById(id);
   }
 
-  await db.update(billItems).set({
+  const item = await db.query.billItems.findFirst({
+    where: eq(billItems.id, id),
+  })
+
+  if (!item) {
+    return {
+      success: false,
+      error: "Item not found.",
+    }
+  }
+
+  const updatedItem = await db.update(billItems).set({
     quantity: newQuantity,
-  }).where(eq(billItems.id, id))
+    subTotal: (Number(item.price) * Number(newQuantity)).toString(),
+    total: ((Number(item.price) * Number(newQuantity)) - Number(item.discount || '0')).toString(),
+  }).where(eq(billItems.id, id)).returning()
+
+  if (updatedItem.length > 0) {
+    await resetSplitBillAllocations(updatedItem[0].splitBillId)
+  }
 
   revalidatePath(`/new-session`)
 

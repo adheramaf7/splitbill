@@ -45,14 +45,18 @@ const getParticipantProportionTotal = (
   allocationValue: number
 ): number => {
   if (allocationType === "percentage") {
-    return (Number(item.price) * item.quantity * allocationValue) / 100
+    return Number(((Number(item.total) * allocationValue) / 100).toFixed(0))
   }
 
   if (allocationType === "nominal") {
     return allocationValue
   }
 
-  return Number(item.price) * allocationValue
+  const totalDiscount = Number(item.discount || "0")
+  const discountPerItem =
+    totalDiscount === 0 ? 0 : Number((totalDiscount / item.quantity).toFixed(0))
+
+  return (Number(item.price) - discountPerItem) * allocationValue
 }
 
 type ActionState = {
@@ -204,7 +208,7 @@ const ItemCard = ({
       return
     }
 
-    if (allocatedBill !== Number(item.price) * item.quantity) {
+    if (allocatedBill !== Number(item.total)) {
       toast.error("Allocated bill must be equal to total bill.")
       return
     }
@@ -217,24 +221,34 @@ const ItemCard = ({
       action={handleSubmit}
       className="flex flex-col rounded-md border px-2 pt-2 pb-4"
     >
-      <div className="mb-3 flex items-start justify-between">
-        <div>
-          <p className="text-lg font-semibold">{item.name}</p>
-          <p className="text-sm text-muted-foreground">
-            {Intl.NumberFormat("id-ID", {
-              style: "decimal",
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }).format(Number(item.price))}{" "}
-            x {item.quantity}
-          </p>
-        </div>
+      <div className="mb-0.5 flex items-start justify-between">
+        <p className="text-lg font-semibold">{item.name}</p>
         <p className="text-lg font-semibold text-primary">
           {Intl.NumberFormat("id-ID", {
             style: "currency",
             currency: "IDR",
-          }).format(Number(item.price) * item.quantity)}
+          }).format(Number(item.total))}
         </p>
+      </div>
+      <div className="mb-3 flex items-start justify-between">
+        <p className="text-xs text-muted-foreground">
+          {Intl.NumberFormat("id-ID", {
+            style: "decimal",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(Number(item.price))}{" "}
+          x {item.quantity}
+        </p>
+        {Number(item.discount || "0") > 0 && (
+          <p className="text-xs font-medium text-destructive/80">
+            Discount:{" "}
+            {Intl.NumberFormat("id-ID", {
+              style: "decimal",
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }).format(Number(item.discount))}
+          </p>
+        )}
       </div>
       <div className="flex flex-row items-center justify-between">
         <AllocationBadgeSatus item={item} allocations={allocations} />
@@ -379,6 +393,24 @@ const ItemCard = ({
                           type="number"
                           min={1}
                           max={item.quantity}
+                          value={proportionValue}
+                          name={`participants[${participantID}]`}
+                          required
+                          onChange={(e) => {
+                            setParticipantProportion((prev) => ({
+                              ...prev,
+                              [participantID]: e.target.value,
+                            }))
+                          }}
+                        />
+                      )}
+
+                      {allocationType === "nominal" && (
+                        <Input
+                          className="max-w-[30%]"
+                          type="number"
+                          min={1}
+                          max={item.total}
                           value={proportionValue}
                           name={`participants[${participantID}]`}
                           required

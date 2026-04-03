@@ -4,6 +4,7 @@ import { db } from "@/db"
 import { billParticipants } from "@/db/schema";
 import { BillParticipant } from "./split-bill";
 import { and, eq } from "drizzle-orm";
+import { resetSplitBillAllocations } from "./split-bill";
 import { revalidatePath } from "next/cache";
 
 export type CreateState = {
@@ -17,6 +18,8 @@ export async function createBillParticipant(_: CreateState, formData: FormData):
     name: formData.get('name') as string,
     splitBillId: formData.get('split_bill_id') as string,
   }).returning()
+
+  await resetSplitBillAllocations(result[0].splitBillId);
 
   revalidatePath('/new-session');
 
@@ -38,6 +41,8 @@ export async function deleteBillParticipantByName(_: DeleteState, payload: { nam
       eq(billParticipants.splitBillId, payload.splitBillId)
     ));
 
+  await resetSplitBillAllocations(payload.splitBillId);
+
   revalidatePath('/new-session');
 
   return {
@@ -46,8 +51,12 @@ export async function deleteBillParticipantByName(_: DeleteState, payload: { nam
 }
 
 export async function deleteBillParticipantById(_: DeleteState, id: string): Promise<DeleteState> {
-  await db.delete(billParticipants)
-    .where(eq(billParticipants.id, id));
+  const deleted = await db.delete(billParticipants)
+    .where(eq(billParticipants.id, id)).returning();
+
+  if (deleted.length > 0) {
+    await resetSplitBillAllocations(deleted[0].splitBillId);
+  }
 
   revalidatePath('/new-session');
 
