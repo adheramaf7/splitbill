@@ -1,10 +1,10 @@
 'use server'
 
-import { resetSplitBillAllocations } from "@/app/actions/split-bill"
 import { db } from "@/db"
 import { billItems } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
+import { deleteBillItemParticipantByItem } from "./bill-item-participant"
 
 export async function createBillItem(splitBillId: string, formData: FormData) {
   const name = formData.get("name") as string
@@ -12,7 +12,7 @@ export async function createBillItem(splitBillId: string, formData: FormData) {
   const quantity = formData.get("quantity") as string
   const discount = formData.get("discount") as string
 
-  const result = await db.insert(billItems).values({
+  await db.insert(billItems).values({
     name,
     price,
     quantity: Number(quantity),
@@ -22,8 +22,6 @@ export async function createBillItem(splitBillId: string, formData: FormData) {
     total: ((Number(price) * Number(quantity)) - Number(discount || '0')).toString(),
   })
 
-  await resetSplitBillAllocations(splitBillId)
-
   revalidatePath(`/new-session`)
 
   return {
@@ -32,10 +30,33 @@ export async function createBillItem(splitBillId: string, formData: FormData) {
 }
 
 export async function updateBillItem(id: string, formData: FormData) {
+  const existing = await db.query.billItems.findFirst({
+    where: eq(billItems.id, id),
+  })
+
+  if (!existing) {
+    return {
+      success: false,
+      error: "Item not found.",
+    }
+  }
+
   const name = formData.get("name") as string
   const price = formData.get("price") as string
   const quantity = formData.get("quantity") as string
   const discount = formData.get("discount") as string
+
+  const hasChanged =
+    existing.name !== name ||
+    existing.price !== price ||
+    existing.quantity !== Number(quantity) ||
+    existing.discount !== (discount || '0')
+
+  if (!hasChanged) {
+    return {
+      success: true,
+    }
+  }
 
   const updatedItem = await db.update(billItems).set({
     name,
@@ -44,11 +65,9 @@ export async function updateBillItem(id: string, formData: FormData) {
     discount: discount || '0',
     subTotal: (Number(price) * Number(quantity)).toString(),
     total: ((Number(price) * Number(quantity)) - Number(discount || '0')).toString(),
-  }).where(eq(billItems.id, id)).returning()
+  }).where(eq(billItems.id, id))
 
-  if (updatedItem.length > 0) {
-    await resetSplitBillAllocations(updatedItem[0].splitBillId)
-  }
+  await deleteBillItemParticipantByItem(id);
 
   revalidatePath(`/new-session`)
 
@@ -83,15 +102,19 @@ export async function updateQuantity(id: string, newQuantity: number) {
     }
   }
 
-  const updatedItem = await db.update(billItems).set({
+  if (item.quantity === newQuantity) {
+    return {
+      success: true,
+    }
+  }
+
+  await db.update(billItems).set({
     quantity: newQuantity,
     subTotal: (Number(item.price) * Number(newQuantity)).toString(),
     total: ((Number(item.price) * Number(newQuantity)) - Number(item.discount || '0')).toString(),
-  }).where(eq(billItems.id, id)).returning()
+  }).where(eq(billItems.id, id))
 
-  if (updatedItem.length > 0) {
-    await resetSplitBillAllocations(updatedItem[0].splitBillId)
-  }
+  await deleteBillItemParticipantByItem(id);
 
   revalidatePath(`/new-session`)
 

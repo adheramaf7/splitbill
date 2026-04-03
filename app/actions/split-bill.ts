@@ -72,13 +72,3 @@ export async function updateSplitBillTotal(id: string) {
 
   redirect(`/new-session/${id}/allocation`);
 }
-
-export async function resetSplitBillAllocations(splitBillId: string) {
-  const itemsData = await db.query.billItems.findMany({
-    where: eq(billItems.splitBillId, splitBillId),
-  });
-
-  if (itemsData.length > 0) {
-    await db.delete(billItemParticipants).where(inArray(billItemParticipants.billItemId, itemsData.map((item) => item.id)));
-  }
-}

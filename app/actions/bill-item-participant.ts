@@ -49,3 +49,7 @@ export async function saveBillItemParticipant(params: SaveBillItemParticipantPar
 
   return { success: true }
 }
+
+export async function deleteBillItemParticipantByItem(itemId: string) {
+  await db.delete(billItemParticipants).where(eq(billItemParticipants.billItemId, itemId));
+}
