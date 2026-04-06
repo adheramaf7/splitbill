@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from "@/db";
-import { billItemParticipants, billItems, billParticipants, splitBills } from "@/db/schema";
+import { billAdjustments, billItemParticipants, billItems, billParticipants, splitBills } from "@/db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
@@ -37,9 +37,10 @@ export async function updateSplitBill(id: string, formData: FormData) {
 
 export type BillItem = typeof billItems.$inferSelect;
 export type BillParticipant = typeof billParticipants.$inferSelect;
+export type BillAdjustment = typeof billAdjustments.$inferInsert;
 export type SplitBill = typeof splitBills.$inferSelect;
 
-export async function getSplitBillById(id: string): Promise<SplitBill & { billItems: BillItem[], billParticipants: BillParticipant[] }> {
+export async function getSplitBillById(id: string): Promise<SplitBill & { billItems: BillItem[], billParticipants: BillParticipant[], billAdjustments: BillAdjustment[] }> {
   const result = await db.query.splitBills.findFirst({
     where: eq(splitBills.id, id),
     with: {

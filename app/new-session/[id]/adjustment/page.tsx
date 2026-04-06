@@ -2,8 +2,10 @@ import { getBillItemParticipantBySplitBillId } from "@/app/actions/bill-item-par
 import { getSplitBillById } from "@/app/actions/split-bill"
 import { determineAllocationStatusItem } from "../allocation/components/allocation-badge-status"
 import { redirect } from "next/navigation"
-import { Button } from "@/components/ui/button"
 import { InfoIcon, UsersRoundIcon } from "lucide-react"
+import AdjustmentItems from "./components/adjustment-items"
+import Navigation from "./components/navigation"
+import ClientContent from "./components/client-content"
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params
@@ -64,38 +66,9 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
           </div>
         </div>
 
-        <section className="mb-6 flex flex-col gap-4">
-          <section>
-            <p className="font-medium text-muted-foreground">Taxes and Fees</p>
-            <div></div>
-          </section>
-          <section>
-            <p className="font-medium text-muted-foreground">
-              Discounts and Saving
-            </p>
-            <div></div>
-          </section>
-        </section>
-
-        <div className="flex flex-col items-center justify-center rounded-md border-2 border-dashed border-gray-300 bg-gray-100 py-5">
-          <p className="mb-1 text-sm font-medium text-muted-foreground">
-            Est. Grand Total
-          </p>
-          <p className="text-3xl font-bold text-primary">
-            {Intl.NumberFormat("id-ID", {
-              style: "currency",
-              currency: "IDR",
-            }).format(Number(splitBill.grandTotal))}
-          </p>
-          <div className="mt-3 flex flex-row items-center justify-center gap-2 rounded bg-gray-200 p-2 text-xs font-semibold text-muted-foreground">
-            <UsersRoundIcon className="text-muted-foregroun size-3" /> Split by{" "}
-            {splitBill.billParticipants.length}
-          </div>
-        </div>
+        <ClientContent splitBill={splitBill} />
       </section>
-      <Button type="button" size={"lg"}>
-        Go to Summary
-      </Button>
+      <Navigation splitBillId={id} />
     </>
   )
 }
