@@ -1,5 +1,5 @@
 import { updateSplitBillTotal } from "@/app/actions/split-bill"
-import SubmitButton from "@/app/new-session/components/submit-button"
+import SubmitButton from "@/app/(protected)/new-session/components/submit-button"
 import { Button } from "@/components/ui/button"
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react"
 import Link from "next/link"

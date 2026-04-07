@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import { createSplitBill } from "../actions/split-bill"
+import { createSplitBill } from "../../actions/split-bill"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import SubmitButton from "./components/submit-button"
