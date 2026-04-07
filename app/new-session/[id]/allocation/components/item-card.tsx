@@ -31,9 +31,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { success } from "zod"
 import { toast } from "sonner"
-import { id } from "zod/v4/locales"
+import { formatNumber } from "@/lib/utils"
 
 type AllocationType = BillItemParticipant["type"]
 
@@ -223,29 +222,16 @@ const ItemCard = ({
       <div className="mb-0.5 flex items-start justify-between">
         <p className="text-lg font-semibold">{item.name}</p>
         <p className="text-lg font-semibold text-primary">
-          {Intl.NumberFormat("id-ID", {
-            style: "currency",
-            currency: "IDR",
-          }).format(Number(item.total))}
+          {formatNumber(Number(item.total))}
         </p>
       </div>
       <div className="mb-3 flex items-start justify-between">
         <p className="text-xs text-muted-foreground">
-          {Intl.NumberFormat("id-ID", {
-            style: "decimal",
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          }).format(Number(item.price))}{" "}
-          x {item.quantity}
+          {formatNumber(Number(item.price))} x {item.quantity}
         </p>
         {Number(item.discount || "0") > 0 && (
           <p className="text-xs font-medium text-destructive/80">
-            Discount:{" "}
-            {Intl.NumberFormat("id-ID", {
-              style: "decimal",
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }).format(Number(item.discount))}
+            Discount: {formatNumber(Number(item.discount))}
           </p>
         )}
       </div>
@@ -354,10 +340,7 @@ const ItemCard = ({
                     </div>
                     <div className="flex justify-between">
                       <p className="text-sm font-semibold text-primary">
-                        {Intl.NumberFormat("id-ID", {
-                          style: "currency",
-                          currency: "IDR",
-                        }).format(
+                        {formatNumber(
                           getParticipantProportionTotal(
                             item,
                             allocationType,
@@ -431,10 +414,7 @@ const ItemCard = ({
           <div className="mt-4 flex items-center justify-between">
             <p className="font-medium">Allocated bill</p>
             <p className="font-medium text-primary">
-              {Intl.NumberFormat("id-ID", {
-                style: "currency",
-                currency: "IDR",
-              }).format(allocatedBill)}
+              {formatNumber(allocatedBill)}
             </p>
           </div>
 

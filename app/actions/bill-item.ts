@@ -18,8 +18,8 @@ export async function createBillItem(splitBillId: string, formData: FormData) {
     quantity: Number(quantity),
     splitBillId,
     discount: discount || '0',
-    subTotal: (Number(price) * Number(quantity)).toString(),
-    total: ((Number(price) * Number(quantity)) - Number(discount || '0')).toString(),
+    subTotal: (Number(price) * Number(quantity)).toFixed(0),
+    total: ((Number(price) * Number(quantity)) - Number(discount || '0')).toFixed(0),
   })
 
   revalidatePath(`/new-session`)
@@ -56,8 +56,8 @@ export async function updateBillItem(id: string, formData: FormData) {
     price,
     quantity: Number(quantity),
     discount: discount || '0',
-    subTotal: (Number(price) * Number(quantity)).toString(),
-    total: ((Number(price) * Number(quantity)) - Number(discount || '0')).toString(),
+    subTotal: (Number(price) * Number(quantity)).toFixed(0),
+    total: ((Number(price) * Number(quantity)) - Number(discount || '0')).toFixed(0),
   }).where(eq(billItems.id, id))
 
   if (priceQuantityDiscountChanged) {
@@ -105,8 +105,8 @@ export async function updateQuantity(id: string, newQuantity: number) {
 
   await db.update(billItems).set({
     quantity: newQuantity,
-    subTotal: (Number(item.price) * Number(newQuantity)).toString(),
-    total: ((Number(item.price) * Number(newQuantity)) - Number(item.discount || '0')).toString(),
+    subTotal: (Number(item.price) * Number(newQuantity)).toFixed(0),
+    total: ((Number(item.price) * Number(newQuantity)) - Number(item.discount || '0')).toFixed(0),
   }).where(eq(billItems.id, id))
 
   await deleteBillItemParticipantByItem(id);

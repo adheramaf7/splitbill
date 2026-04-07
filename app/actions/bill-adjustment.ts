@@ -73,8 +73,8 @@ export async function insertTemplateAdjustments(splitBillId: string) {
     }, 0)
 
     await tx.update(splitBills).set({
-      totalAdjustments: totalAdjustments.toString(),
-      grandTotal: (Number(splitBill.total) + totalAdjustments).toString(),
+      totalAdjustments: totalAdjustments.toFixed(0),
+      grandTotal: (Number(splitBill.total) + totalAdjustments).toFixed(0),
     }).where(eq(splitBills.id, splitBillId))
   })
 
@@ -114,8 +114,8 @@ export async function insertAdjustment(splitBillId: string, formData: FormData) 
     }, 0)
 
     await tx.update(splitBills).set({
-      totalAdjustments: totalAdjustments.toString(),
-      grandTotal: (Number(splitBill.total) + totalAdjustments).toString(),
+      totalAdjustments: totalAdjustments.toFixed(0),
+      grandTotal: (Number(splitBill.total) + totalAdjustments).toFixed(0),
     }).where(eq(splitBills.id, splitBillId))
   })
 
@@ -151,8 +151,8 @@ export async function deleteAdjustment(id: string) {
     }, 0)
 
     await tx.update(splitBills).set({
-      totalAdjustments: totalAdjustments.toString(),
-      grandTotal: (Number(splitBill.total) + totalAdjustments).toString(),
+      totalAdjustments: totalAdjustments.toFixed(0),
+      grandTotal: (Number(splitBill.total) + totalAdjustments).toFixed(0),
     }).where(eq(splitBills.id, splitBill.id))
 
     return splitBill.id;
@@ -202,8 +202,8 @@ export async function updateAdjustment(id: string, formData: FormData) {
     }, 0)
 
     await tx.update(splitBills).set({
-      totalAdjustments: totalAdjustments.toString(),
-      grandTotal: (Number(splitBill.total) + totalAdjustments).toString(),
+      totalAdjustments: totalAdjustments.toFixed(0),
+      grandTotal: (Number(splitBill.total) + totalAdjustments).toFixed(0),
     }).where(eq(splitBills.id, splitBill.id))
   })
 

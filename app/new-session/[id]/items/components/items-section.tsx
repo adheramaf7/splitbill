@@ -24,6 +24,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { formatNumber } from "@/lib/utils"
 import {
   EditIcon,
   ListXIcon,
@@ -257,19 +258,15 @@ const ItemCard = ({ item, onEdit }: { item: BillItem; onEdit: () => void }) => {
         <div className="flex flex-col items-start gap-1">
           <p className="text-xs text-muted-foreground">Price</p>
           <p className="text-sm font-medium">
-            {Intl.NumberFormat("id-ID", {
-              style: "currency",
-              currency: "IDR",
-            }).format(Number(item.price))}
+            {formatNumber(Number(item.price))}
           </p>
         </div>
         <div className="flex flex-col items-start gap-1">
           <p className="text-xs text-muted-foreground">Discount</p>
           <p className="text-sm font-medium">
-            {Intl.NumberFormat("id-ID", {
-              style: "currency",
-              currency: "IDR",
-            }).format(Number(item.discount))}
+            {Number(item.discount || "0") > 0
+              ? formatNumber(Number(item.discount))
+              : "-"}
           </p>
         </div>
       </div>

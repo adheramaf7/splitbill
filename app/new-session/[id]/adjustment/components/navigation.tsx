@@ -12,9 +12,11 @@ const Navigation = ({ splitBillId }: { splitBillId: string }) => {
           <ArrowLeftIcon /> Prev
         </Button>
       </Link>
-      <Button type="button" size={"lg"} onClick={() => {}}>
-        Next <ArrowRightIcon />
-      </Button>
+      <Link href={`/new-session/${splitBillId}/summary`}>
+        <Button type="button" size={"lg"}>
+          Go to Summary <ArrowRightIcon />
+        </Button>
+      </Link>
     </div>
   )
 }

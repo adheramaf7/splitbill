@@ -7,6 +7,7 @@ import Navigation from "./components/navigation"
 import { Metadata } from "next"
 import GrandTotal from "./components/grand-total"
 import AdjustmentItems from "./components/adjustment-items"
+import { formatNumber } from "@/lib/utils"
 
 export const metadata: Metadata = {
   title: "Bill Adjustments",
@@ -50,10 +51,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             Sub Total
           </p>
           <p className="text-2xl font-bold text-primary">
-            {Intl.NumberFormat("id-ID", {
-              style: "currency",
-              currency: "IDR",
-            }).format(Number(splitBill.total))}
+            {formatNumber(Number(splitBill.total))}
           </p>
         </div>
 

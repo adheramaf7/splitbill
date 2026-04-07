@@ -1,5 +1,6 @@
 "use client"
 
+import { formatNumber } from "@/lib/utils"
 import { UsersRoundIcon } from "lucide-react"
 
 type Params = {
@@ -19,10 +20,7 @@ const GrandTotal = ({
         Est. Grand Total
       </p>
       <p className="text-3xl font-bold text-primary">
-        {Intl.NumberFormat("id-ID", {
-          style: "currency",
-          currency: "IDR",
-        }).format(subTotal + totalAdjustments)}
+        {formatNumber(subTotal + totalAdjustments)}
       </p>
       <div className="mt-3 flex flex-row items-center justify-center gap-2 rounded bg-gray-200 p-2 text-xs font-semibold text-muted-foreground">
         <UsersRoundIcon className="text-muted-foregroun size-3" /> Split by{" "}

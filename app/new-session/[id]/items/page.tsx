@@ -5,6 +5,7 @@ import ItemsSection from "./components/items-section"
 import Navigation from "./components/navigation"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { InfoIcon } from "lucide-react"
+import { formatNumber } from "@/lib/utils"
 
 export const metadata: Metadata = {
   title: "Input Participant and Items",
@@ -21,9 +22,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         <p className="text-xs text-muted-foreground">Step 1 of 4</p>
         <p className="text-sm">Input participants and items.</p>
       </section>
-      <ScrollArea className="mb-4 flex flex-1 flex-col overflow-y-auto">
-        {/* <p className="my-5">BILL ID: {splitBill.id}</p> */}
-
+      <div className="mb-4 flex flex-1 flex-col overflow-y-auto">
         <ParticipantsSection
           splitBillId={id}
           participants={splitBill.billParticipants.sort((a, b) =>
@@ -43,10 +42,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             Total Bills
           </p>
           <p className="text-lg font-semibold">
-            {Intl.NumberFormat("id-ID", {
-              style: "currency",
-              currency: "IDR",
-            }).format(
+            {formatNumber(
               splitBill.billItems.reduce(
                 (acc, item) => acc + Number(item.total),
                 0
@@ -72,7 +68,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             </li>
           </ul>
         </div>
-      </ScrollArea>
+      </div>
 
       <Navigation
         splitBillId={id}

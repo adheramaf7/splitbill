@@ -74,3 +74,20 @@ export async function updateSplitBillTotal(id: string) {
 
   redirect(`/new-session/${id}/allocation`);
 }
+
+export async function lockSplitBill(id: string) {
+  await db.update(splitBills).set({
+    isDraft: false,
+  }).where(eq(splitBills.id, id));
+
+  redirect(`/split-bill/${id}`);
+}
+
+export async function getSplitBills() {
+  const result = await db.query.splitBills.findMany({
+    with: {
+      billParticipants: true,
+    },
+  });
+  return result;
+}

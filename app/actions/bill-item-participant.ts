@@ -39,7 +39,7 @@ export async function saveBillItemParticipant(params: SaveBillItemParticipantPar
           billParticipantId: p.participantId,
           type: p.type,
           value: p.value.toString(),
-          total: p.total.toString(),
+          total: p.total.toFixed(0),
         })
       )
     );

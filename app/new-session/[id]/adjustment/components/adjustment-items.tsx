@@ -44,11 +44,23 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
+import { formatNumber } from "@/lib/utils"
 
 type Params = {
   type: BillAdjustment["type"]
   items: BillAdjustment[]
   splitBillId: string
+}
+
+const adjustmentTypeLabel = ({ type }: { type: BillAdjustment["type"] }) => {
+  switch (type) {
+    case "additional":
+      return "Additional Fees"
+    case "discount":
+      return "Discounts and Savings"
+    default:
+      return ""
+  }
 }
 
 const AdjustmentItems = ({ type, items, splitBillId }: Params) => {
@@ -76,13 +88,13 @@ const AdjustmentItems = ({ type, items, splitBillId }: Params) => {
         <div className="flex flex-1 items-center gap-2">
           {type === "additional" ? (
             <>
-              <TrendingUpIcon className="size-4 text-green-600" /> Taxes and
-              Fees
+              <TrendingUpIcon className="size-4 text-green-600" />{" "}
+              {adjustmentTypeLabel({ type })}
             </>
           ) : (
             <>
-              <TrendingDownIcon className="size-4 text-red-600" /> Discounts and
-              Savings
+              <TrendingDownIcon className="size-4 text-red-600" />{" "}
+              {adjustmentTypeLabel({ type })}
             </>
           )}
         </div>
@@ -102,16 +114,11 @@ const AdjustmentItems = ({ type, items, splitBillId }: Params) => {
               <EmptyMedia variant="icon">
                 <ListXIcon />
               </EmptyMedia>
-              <EmptyTitle>No Items Yet</EmptyTitle>
+              <EmptyTitle>No {adjustmentTypeLabel({ type })} Added</EmptyTitle>
               <EmptyDescription>
-                You haven&apos;t added any items yet..
+                You haven&apos;t added any items yet.
               </EmptyDescription>
             </EmptyHeader>
-            <EmptyContent className="flex-row justify-center gap-2">
-              <Button type="button" onClick={handleNewEntry}>
-                Add First Item
-              </Button>
-            </EmptyContent>
           </Empty>
         )}
         {items.map((item) =>
@@ -175,11 +182,7 @@ const AdjustmentItemCard = ({
       <div className="mb-1 flex items-start justify-between">
         <p className="font-semibold">{item.name}</p>
         <div className="text-right font-semibold text-primary">
-          {Intl.NumberFormat("id-ID", {
-            style: "decimal",
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          }).format(Number(item.value))}{" "}
+          {formatNumber(Number(item.value))}{" "}
           {item.valueType === "percentage" && "%"}
         </div>
       </div>
