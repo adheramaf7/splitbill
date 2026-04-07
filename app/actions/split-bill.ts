@@ -37,7 +37,7 @@ export async function updateSplitBill(id: string, formData: FormData) {
 
 export type BillItem = typeof billItems.$inferSelect;
 export type BillParticipant = typeof billParticipants.$inferSelect;
-export type BillAdjustment = typeof billAdjustments.$inferInsert;
+export type BillAdjustment = typeof billAdjustments.$inferSelect;
 export type SplitBill = typeof splitBills.$inferSelect;
 
 export async function getSplitBillById(id: string): Promise<SplitBill & { billItems: BillItem[], billParticipants: BillParticipant[], billAdjustments: BillAdjustment[] }> {

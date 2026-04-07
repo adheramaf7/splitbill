@@ -2,10 +2,15 @@ import { getBillItemParticipantBySplitBillId } from "@/app/actions/bill-item-par
 import { getSplitBillById } from "@/app/actions/split-bill"
 import { determineAllocationStatusItem } from "../allocation/components/allocation-badge-status"
 import { redirect } from "next/navigation"
-import { InfoIcon, UsersRoundIcon } from "lucide-react"
-import AdjustmentItems from "./components/adjustment-items"
+import { InfoIcon } from "lucide-react"
 import Navigation from "./components/navigation"
-import ClientContent from "./components/client-content"
+import { Metadata } from "next"
+import GrandTotal from "./components/grand-total"
+import AdjustmentItems from "./components/adjustment-items"
+
+export const metadata: Metadata = {
+  title: "Bill Adjustments",
+}
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params
@@ -39,7 +44,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         <p className="text-xs text-muted-foreground">Step 3 of 4</p>
         <p className="text-sm">Input bill adjustments.</p>
       </section>
-      <section className="flex flex-1 flex-col">
+      <section className="mb-4 flex flex-1 flex-col overflow-y-auto">
         <div className="mb-4 flex flex-col items-center justify-center rounded-md bg-gray-200 py-5">
           <p className="mb-1 text-sm font-medium text-muted-foreground">
             Sub Total
@@ -52,7 +57,34 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
           </p>
         </div>
 
-        <div className="mb-4 flex flex-row items-start justify-start gap-2 rounded-md bg-gray-100 px-4 py-3">
+        <div className="mb-6 flex flex-col gap-4">
+          <AdjustmentItems
+            type="additional"
+            splitBillId={id}
+            items={splitBill.billAdjustments
+              .filter((e) => e.type === "additional")
+              .sort((a, b) => a.sequenceNumber - b.sequenceNumber)}
+          />
+          <AdjustmentItems
+            type="discount"
+            splitBillId={id}
+            items={splitBill.billAdjustments
+              .filter((e) => e.type === "discount")
+              .sort((a, b) => a.sequenceNumber - b.sequenceNumber)}
+          />
+        </div>
+
+        <GrandTotal
+          subTotal={Number(splitBill.total)}
+          billParticipantsCount={splitBill.billParticipants.length}
+          totalAdjustments={splitBill.billAdjustments.reduce((acc, item) => {
+            return (
+              acc + Number(item.amount) * (item.type === "additional" ? 1 : -1)
+            )
+          }, 0)}
+        />
+
+        <div className="mt-4 flex flex-row items-start justify-start gap-2 rounded-md bg-gray-100 px-4 py-3">
           <div className="pt-1">
             <InfoIcon className="size-4 text-primary" />
           </div>
@@ -65,8 +97,6 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             </p>
           </div>
         </div>
-
-        <ClientContent splitBill={splitBill} />
       </section>
       <Navigation splitBillId={id} />
     </>

@@ -21,7 +21,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         <p className="text-xs text-muted-foreground">Step 1 of 4</p>
         <p className="text-sm">Input participants and items.</p>
       </section>
-      <ScrollArea className="flex flex-1 flex-col overflow-y-auto">
+      <ScrollArea className="mb-4 flex flex-1 flex-col overflow-y-auto">
         {/* <p className="my-5">BILL ID: {splitBill.id}</p> */}
 
         <ParticipantsSection
@@ -34,7 +34,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         <ItemsSection
           splitBillId={id}
           items={splitBill.billItems.sort(
-            (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+            (a, b) => a.sequenceNumber - b.sequenceNumber
           )}
         />
 
@@ -54,7 +54,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             )}
           </p>
         </div>
-        <div className="mb-4 flex flex-col items-start gap-1 rounded-md bg-gray-100 p-2">
+        <div className="flex flex-col items-start gap-1 rounded-md bg-gray-100 p-2">
           <div className="flex items-center gap-2 text-sm text-yellow-700">
             <InfoIcon className="size-4" />
             <p className="font-medium">Warning</p>

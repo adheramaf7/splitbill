@@ -112,6 +112,7 @@ export const splitBills = pgTable("split_bills", (t) => ({
 export const billParticipants = pgTable('bill_participants', (t) => {
   return {
     id: t.uuid("id").defaultRandom().primaryKey(),
+    sequenceNumber: t.serial("sequence_number").notNull(),
     name: t.varchar("name").notNull(),
     splitBillId: t.uuid("split_bill_id")
       .notNull()
@@ -128,9 +129,11 @@ export const billParticipants = pgTable('bill_participants', (t) => {
 export const billAdjustments = pgTable('bill_adjustments', (t) => {
   return {
     id: t.uuid("id").defaultRandom().primaryKey(),
+    sequenceNumber: t.serial("sequence_number").notNull(),
     name: t.varchar("name").notNull(),
     type: t.text('type', { enum: ['additional', 'discount'] }).notNull(),
-    percentage: t.numeric("percentage"),
+    valueType: t.text('value_type', { enum: ['percentage', 'nominal'] }).notNull(),
+    value: t.numeric("value").notNull(),
     amount: t.numeric("amount").notNull(),
     splitBillId: t.uuid("split_bill_id")
       .notNull()
@@ -146,6 +149,7 @@ export const billAdjustments = pgTable('bill_adjustments', (t) => {
 export const billItems = pgTable('bill_items', (t) => {
   return {
     id: t.uuid("id").defaultRandom().primaryKey(),
+    sequenceNumber: t.serial("sequence_number").notNull(),
     name: t.varchar("name").notNull(),
     price: t.numeric("price").notNull(),
     quantity: t.integer("quantity").notNull(),

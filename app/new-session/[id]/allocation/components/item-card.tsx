@@ -187,10 +187,9 @@ const ItemCard = ({
   const changeAllocationType = (type: AllocationType) => {
     setAllocationType(type)
 
-    //reset all to zero
     setParticipantProportion(
-      participants.reduce((acc, p) => {
-        acc[p.id] = "0"
+      Object.entries(participantProportion).reduce((acc, [key, _]) => {
+        acc[key] = "0"
         return acc
       }, {} as ParticipantProportion)
     )
