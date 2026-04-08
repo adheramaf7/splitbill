@@ -17,7 +17,9 @@ export function InitialLogo({
         width={widthHeight}
         height={widthHeight}
       />
-      <span className={`${textSize} font-bold text-slate-900`}>DivvyUp</span>
+      <span className={`${textSize} font-bold text-slate-900`}>
+        {process.env.APP_NAME}
+      </span>
     </div>
   )
 }
