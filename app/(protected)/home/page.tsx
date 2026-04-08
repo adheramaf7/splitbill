@@ -17,7 +17,7 @@ export default async function Page() {
   const splitBills = await getSplitBills()
   return (
     <>
-      <ul className="mt-4 flex flex-col gap-2">
+      <ul className="mt-4 flex w-full flex-col gap-2">
         {splitBills.length === 0 && (
           <Empty>
             <EmptyHeader>
@@ -66,17 +66,6 @@ export default async function Page() {
           </li>
         ))}
       </ul>
-      {splitBills.length > 0 && (
-        <Link href={"/new-session"}>
-          <Button
-            className="absolute right-4 bottom-4"
-            type="button"
-            size={"xl"}
-          >
-            <PlusIcon /> New Session
-          </Button>
-        </Link>
-      )}
     </>
   )
 }

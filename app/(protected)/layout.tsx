@@ -1,48 +1,38 @@
 import { InitialLogo } from "@/components/initial-logo"
+import { UserDropdownMenu } from "@/components/user-dropdown-menu"
+import { auth } from "@/lib/auth"
+import { redirect } from "next/navigation"
 import React from "react"
+import { headers } from "next/headers"
 
-const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
+const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
+
+  if (!session?.session) {
+    return redirect("/")
+  }
+
   return (
-    <div className="min-h-screen w-full bg-linear-to-b from-slate-50 to-white">
+    <div className="flex min-h-screen w-full flex-col bg-linear-to-b from-slate-50 to-white">
       {/* Navigation */}
       <nav className="sticky top-0 z-50 border-b border-slate-200/50 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <InitialLogo />
+          <UserDropdownMenu />
         </div>
       </nav>
 
-      <main>{children}</main>
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4">
+        {children}
+      </main>
 
       {/* FOOTER */}
-      <footer className="mt-16 border-t border-slate-200 bg-slate-50">
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="mb-8 flex flex-col items-center justify-between gap-8 md:flex-row">
-            <div>
-              <div className="mb-2">
-                <InitialLogo />
-              </div>
-              <p className="text-slate-600">Fair splits, zero hassle.</p>
-            </div>
-            <div className="flex gap-6">
-              {/* <a
-                      href="#"
-                      className="text-slate-600 transition-colors hover:text-slate-900"
-                    >
-                      Privacy
-                    </a>
-                    <a
-                      href="#"
-                      className="text-slate-600 transition-colors hover:text-slate-900"
-                    >
-                      Terms
-                    </a> */}
-            </div>
-          </div>
-          <div className="border-t border-slate-200 pt-8 text-center text-sm text-slate-600">
-            <p>
-              © {new Date().getFullYear()} DivvyUp. Made with care for fair
-              splits everywhere.
-            </p>
+      <footer className="mt-10 border-t border-slate-200 bg-slate-50">
+        <div className="mx-auto max-w-6xl py-3">
+          <div className="text-center text-sm text-slate-600">
+            <p>© {new Date().getFullYear()} DivvyUp.</p>
           </div>
         </div>
       </footer>

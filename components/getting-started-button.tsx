@@ -2,20 +2,20 @@
 
 import { Button } from "./ui/button"
 import { ArrowRight } from "lucide-react"
-import { signIn, getSession } from "@/lib/auth-client"
+import { authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
 
 export function GettingStartedButton() {
   const router = useRouter()
 
   const handleSignIn = async () => {
-    const { data: session, error } = await getSession()
+    const { data: session, error } = await authClient.getSession()
 
     if (session) {
       return router.push("/home")
     }
 
-    await signIn.social({
+    await authClient.signIn.social({
       provider: "google",
       callbackURL: "/home",
     })
