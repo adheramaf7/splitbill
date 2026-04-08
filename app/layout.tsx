@@ -15,12 +15,22 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 })
 
+const APP_NAME = process.env.APP_NAME || "APP_NAME"
+
 export const metadata: Metadata = {
   title: {
-    default: "Split Biller",
-    template: "%s | Split Biller",
+    default: `${APP_NAME} - Split Bills Fairly & Instantly`,
+    template: `%s | ${APP_NAME}`,
   },
-  description: "Split bills with your friends and family",
+  description:
+    "Split shared expenses accurately with friends, coworkers, and groups. DivvyUp handles taxes, discounts, and mixed portions. 100% free forever.",
+  icons: {
+    icon: [
+      {
+        url: "/logo.png",
+      },
+    ],
+  },
 }
 
 export default function RootLayout({
