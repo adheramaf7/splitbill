@@ -21,6 +21,8 @@ import {
   MenuIcon,
 } from "lucide-react"
 
+const APP_NAME = process.env.APP_NAME || "APP_NAME"
+
 export default function Home() {
   return (
     <div className="min-h-screen w-full bg-linear-to-b from-slate-50 to-white">
@@ -68,13 +70,18 @@ export default function Home() {
               Split bills the fair way. No awkward moments.
             </h1>
             <p className="text-lg leading-relaxed text-slate-600">
-              DivvyUp helps you split shared expenses accurately—even with
+              {APP_NAME} helps you split shared expenses accurately—even with
               discounts, taxes, and mixed portions.
             </p>
-            <div className="flex flex-row gap-4 pt-4">
+            <div className="flex flex-col gap-4 pt-4 md:flex-row">
               <GoogleSignIn />
-              <a href="#how-it-works">
-                <Button size="xl" variant="outline" type="button">
+              <a href="#how-it-works" className="w-full md:w-auto">
+                <Button
+                  size="xl"
+                  variant="outline"
+                  type="button"
+                  className="w-full md:w-auto"
+                >
                   See How It Works <ChevronRightIcon className="ml-2" />
                 </Button>
               </a>
@@ -127,7 +134,7 @@ export default function Home() {
       <section className="mx-auto max-w-6xl rounded-3xl bg-linear-to-b from-transparent to-primary/30 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-bold text-slate-900 md:text-4xl">
-            DivvyUp does the math for you
+            {APP_NAME} does the math for you
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-slate-600">
             Just input items and assign people. We handle the complex
@@ -178,7 +185,7 @@ export default function Home() {
             {
               icon: ReceiptText,
               title: "Smart Item Splitting",
-              desc: "Split by quantity, percentage, or exact amounts. DivvyUp adapts to your needs.",
+              desc: `Split by quantity, percentage, or exact amounts. ${APP_NAME} adapts to your needs.`,
             },
             {
               icon: Check,
@@ -261,8 +268,8 @@ export default function Home() {
             Fair, simple, and completely free
           </h2>
           <p className="mx-auto mb-8 max-w-2xl text-lg text-primary">
-            No subscriptions. No hidden fees. No limits. DivvyUp is free forever
-            because fair splits shouldn&apos;t cost money.
+            No subscriptions. No hidden fees. No limits. {APP_NAME} is free
+            forever because fair splits shouldn&apos;t cost money.
           </p>
           <div className="text-6xl font-bold">FREE</div>
         </div>
@@ -322,7 +329,7 @@ export default function Home() {
           Ready to split smarter?
         </h2>
         <p className="mb-8 text-lg text-slate-600">
-          Start using DivvyUp today—free forever.
+          Start using {APP_NAME} today—free forever.
         </p>
         <GettingStartedButton />
       </section>
@@ -354,7 +361,7 @@ export default function Home() {
           </div>
           <div className="border-t border-slate-200 pt-8 text-center text-sm text-slate-600">
             <p>
-              © {new Date().getFullYear()} DivvyUp. Made with care for fair
+              © {new Date().getFullYear()} {APP_NAME}. Made with care for fair
               splits everywhere.
             </p>
           </div>
