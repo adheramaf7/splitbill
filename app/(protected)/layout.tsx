@@ -35,7 +35,9 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
       <footer className="border-t border-slate-200 bg-slate-50">
         <div className="mx-auto max-w-6xl py-3">
           <div className="text-center text-sm text-slate-600">
-            <p>© {new Date().getFullYear()} DivvyUp.</p>
+            <p>
+              © {new Date().getFullYear()} {APP_NAME}.
+            </p>
           </div>
         </div>
       </footer>

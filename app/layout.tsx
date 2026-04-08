@@ -22,8 +22,7 @@ export const metadata: Metadata = {
     default: `${APP_NAME} - Split Bills Fairly & Instantly`,
     template: `%s | ${APP_NAME}`,
   },
-  description:
-    "Split shared expenses accurately with friends, coworkers, and groups. DivvyUp handles taxes, discounts, and mixed portions. 100% free forever.",
+  description: `Split shared expenses accurately with friends, coworkers, and groups. ${APP_NAME} handles taxes, discounts, and mixed portions. 100% free forever.`,
   icons: {
     icon: [
       {
