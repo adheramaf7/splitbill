@@ -8,6 +8,55 @@
       "when": 1774841648672,
       "tag": "0000_careful_lorna_dane",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1775018552224,
+      "tag": "0001_lazy_clint_barton",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775110951681,
+      "tag": "0002_peaceful_polaris",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1775178951801,
+      "tag": "0003_chunky_shocker",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1775179276860,
+      "tag": "0004_previous_nighthawk",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1775185425218,
+      "tag": "0005_robust_sebastian_shaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1775534252962,
+      "tag": "0006_open_weapon_omega",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1775542279404,
+      "tag": "0007_futuristic_sauron",
+      "breakpoints": true
     }
   ]
 }

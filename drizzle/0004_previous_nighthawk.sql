@@ -1,0 +1,1 @@
+ALTER TABLE "bill_participants" ADD COLUMN "total_adjustments" numeric;
