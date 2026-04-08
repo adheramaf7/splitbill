@@ -1,5 +1,3 @@
-"use client"
-
 import { InitialLogo } from "@/components/initial-logo"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -14,21 +12,16 @@ import {
 
 export default function Home() {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen w-full bg-linear-to-b from-slate-50 to-white">
       {/* Navigation */}
       <nav className="sticky top-0 z-50 border-b border-slate-200/50 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <InitialLogo />
-          <Button
-            onClick={() =>
-              document
-                .getElementById("cta")
-                ?.scrollIntoView({ behavior: "smooth" })
-            }
-            size={"xl"}
-          >
-            Start Free
-          </Button>
+          <a href="#cta">
+            <Button type="button" size={"xl"}>
+              Start Free
+            </Button>
+          </a>
         </div>
       </nav>
 
@@ -44,25 +37,21 @@ export default function Home() {
               discounts, taxes, and mixed portions.
             </p>
             <div className="flex flex-col gap-4 pt-4 sm:flex-row">
-              <Button size="xl">
-                Start Splitting — It&apos;s Free
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Button>
-              <Button
-                size="xl"
-                variant="outline"
-                onClick={() =>
-                  document
-                    .getElementById("how-it-works")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-              >
-                See How It Works
-              </Button>
+              <a href="#cta">
+                <Button type="button" size="xl">
+                  Start Splitting — It&apos;s Free
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </a>
+              <a href="#how-it-works">
+                <Button size="xl" variant="outline" type="button">
+                  See How It Works
+                </Button>
+              </a>
             </div>
           </div>
           <div className="hidden items-center justify-center md:flex">
-            <div className="relative flex h-64 w-full items-center justify-center overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-primary/50 shadow-2xl md:h-80">
+            <div className="relative flex h-64 w-full items-center justify-center overflow-hidden rounded-3xl bg-linear-to-br from-primary to-primary/50 shadow-2xl md:h-80">
               <div className="bg-grid-pattern absolute inset-0 opacity-20"></div>
               <div className="relative z-10 text-center">
                 <Wallet className="mx-auto mb-4 h-24 w-24 text-primary-foreground" />
@@ -79,7 +68,7 @@ export default function Home() {
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
         <div className="grid items-center gap-12 md:grid-cols-2">
           <div className="hidden items-center justify-center md:flex">
-            <div className="relative flex h-64 w-full items-center justify-center rounded-3xl bg-gradient-to-br from-red-50 to-orange-50 shadow-lg md:h-80">
+            <div className="relative flex h-64 w-full items-center justify-center rounded-3xl bg-linear-to-br from-red-50 to-orange-50 shadow-lg md:h-80">
               <div className="text-center">
                 <div className="mb-4 text-6xl">😕</div>
                 <p className="font-semibold text-slate-700">Messy Math</p>
@@ -105,7 +94,7 @@ export default function Home() {
       </section>
 
       {/* SOLUTION SECTION */}
-      <section className="mx-auto max-w-6xl rounded-3xl bg-gradient-to-b from-transparent to-primary/30 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+      <section className="mx-auto max-w-6xl rounded-3xl bg-linear-to-b from-transparent to-primary/30 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-bold text-slate-900 md:text-4xl">
             DivvyUp does the math for you
@@ -181,7 +170,7 @@ export default function Home() {
                 className="border-slate-200 p-6 transition-all hover:border-primary hover:shadow-lg"
               >
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
                       <Icon className="h-6 w-6 text-green-600" />
                     </div>
@@ -233,7 +222,7 @@ export default function Home() {
       </section>
 
       {/* VALUE PROPOSITION SECTION */}
-      <section className="mx-auto max-w-6xl rounded-3xl bg-gradient-to-r from-primary to-blue-600 px-4 py-16 text-white sm:px-6 md:py-24 lg:px-8">
+      <section className="mx-auto max-w-6xl rounded-3xl bg-linear-to-r from-primary to-blue-600 px-4 py-16 text-white sm:px-6 md:py-24 lg:px-8">
         <div className="text-center">
           <h2 className="mb-4 text-3xl font-bold md:text-4xl">
             Fair, simple, and completely free
@@ -274,16 +263,16 @@ export default function Home() {
               desc: "Roommates, utilities, and household",
             },
           ].map((useCase, idx) => (
-            <Card
+            <div
               key={idx}
-              className="border-slate-200 p-6 text-center transition-all hover:border-green-300 hover:shadow-lg"
+              className="rounded-md border-[0.5px] border-slate-200 p-6 text-center transition-all hover:border-green-300 hover:shadow-lg"
             >
               <div className="mb-4 text-4xl">{useCase.emoji}</div>
               <h3 className="mb-2 font-semibold text-slate-900">
                 {useCase.title}
               </h3>
               <p className="text-sm text-slate-600">{useCase.desc}</p>
-            </Card>
+            </div>
           ))}
         </div>
       </section>
@@ -311,7 +300,7 @@ export default function Home() {
           <div className="mb-8 flex flex-col items-center justify-between gap-8 md:flex-row">
             <div>
               <div className="mb-2">
-                <InitialLogo size="sm" />
+                <InitialLogo />
               </div>
               <p className="text-slate-600">Fair splits, zero hassle.</p>
             </div>
