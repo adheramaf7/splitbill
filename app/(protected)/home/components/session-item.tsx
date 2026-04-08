@@ -18,7 +18,6 @@ export const SessionItem = ({
 
   return (
     <li
-      key={splitBill.id}
       className="group flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-md border p-2 transition-opacity odd:border-l-4 odd:border-l-primary odd:bg-white even:bg-gray-50 hover:opacity-80"
       onClick={() =>
         router.push(

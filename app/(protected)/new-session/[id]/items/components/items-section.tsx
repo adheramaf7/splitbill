@@ -371,10 +371,9 @@ const FormCard = ({
             id="item_discount"
             type="number"
             autoComplete="off"
-            min={0}
+            min={1}
             name="discount"
             defaultValue={existingItem?.discount}
-            required
           />
         </Field>
       </div>
