@@ -63,6 +63,16 @@ export async function getSplitBillById(id: string): Promise<SplitBill & { billIt
   return result;
 }
 
+export async function deleteSplitBill(id: string): Promise<{ success: boolean }> {
+  await db.delete(splitBills).where(eq(splitBills.id, id));
+
+  revalidatePath(`/home`);
+
+  return {
+    success: true,
+  }
+}
+
 export async function updateSplitBillTotal(id: string) {
   const itemsData = await db.query.billItems.findMany({
     where: eq(billItems.splitBillId, id),

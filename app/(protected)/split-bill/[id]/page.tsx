@@ -5,7 +5,6 @@ import { ArrowLeftIcon, PercentCircleIcon, ReceiptIcon } from "lucide-react"
 import { formatDate, formatNumber } from "@/lib/utils"
 import { getSplitBillById } from "@/app/actions/split-bill"
 import { getBillItemParticipantBySplitBillId } from "@/app/actions/bill-item-participant"
-import { determineAllocationStatusItem } from "../../new-session/[id]/allocation/components/allocation-badge-status"
 import { Button } from "@/components/ui/button"
 
 export const metadata: Metadata = {
