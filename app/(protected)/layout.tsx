@@ -6,6 +6,8 @@ import React from "react"
 import { headers } from "next/headers"
 import Link from "next/link"
 
+const APP_NAME = process.env.APP_NAME || "APP_NAME"
+
 const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth.api.getSession({
     headers: await headers(),
