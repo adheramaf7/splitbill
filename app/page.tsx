@@ -73,10 +73,15 @@ export default function Home() {
               {APP_NAME} helps you split shared expenses accurately—even with
               discounts, taxes, and mixed portions.
             </p>
-            <div className="flex flex-row gap-4 pt-4">
+            <div className="flex flex-col gap-4 pt-4 md:flex-row">
               <GoogleSignIn />
-              <a href="#how-it-works">
-                <Button size="xl" variant="outline" type="button">
+              <a href="#how-it-works" className="w-full md:w-auto">
+                <Button
+                  size="xl"
+                  variant="outline"
+                  type="button"
+                  className="w-full md:w-auto"
+                >
                   See How It Works <ChevronRightIcon className="ml-2" />
                 </Button>
               </a>
