@@ -1,6 +1,15 @@
+import { GettingStartedButton } from "@/components/getting-started-button"
+import { GoogleIcon } from "@/components/google-icon"
+import { GoogleSignIn } from "@/components/google-sign-in"
 import { InitialLogo } from "@/components/initial-logo"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   ArrowRight,
   Check,
@@ -8,6 +17,8 @@ import {
   Zap,
   ReceiptText,
   Wallet,
+  ChevronRightIcon,
+  MenuIcon,
 } from "lucide-react"
 
 export default function Home() {
@@ -17,11 +28,35 @@ export default function Home() {
       <nav className="sticky top-0 z-50 border-b border-slate-200/50 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <InitialLogo />
-          <a href="#cta">
-            <Button type="button" size={"xl"}>
-              Start Free
-            </Button>
-          </a>
+          <ul className="hidden flex-row gap-6 text-sm font-medium md:flex">
+            <li>
+              <a href="#features">Features</a>
+            </li>
+            <li>
+              <a href="#how-it-works">How It Works</a>
+            </li>
+            <li>
+              <a href="#use-cases">Use Cases</a>
+            </li>
+          </ul>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="md:hidden" size={"icon-lg"}>
+                <MenuIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem asChild>
+                <a href="#features">Features</a>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a href="#how-it-works">How It Works</a>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a href="#use-cases">Use Cases</a>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </nav>
 
@@ -36,16 +71,11 @@ export default function Home() {
               DivvyUp helps you split shared expenses accurately—even with
               discounts, taxes, and mixed portions.
             </p>
-            <div className="flex flex-col gap-4 pt-4 sm:flex-row">
-              <a href="#cta">
-                <Button type="button" size="xl">
-                  Start Splitting — It&apos;s Free
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </a>
+            <div className="flex flex-row gap-4 pt-4">
+              <GoogleSignIn />
               <a href="#how-it-works">
                 <Button size="xl" variant="outline" type="button">
-                  See How It Works
+                  See How It Works <ChevronRightIcon className="ml-2" />
                 </Button>
               </a>
             </div>
@@ -136,7 +166,10 @@ export default function Home() {
       </section>
 
       {/* FEATURES SECTION */}
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+      <section
+        className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8"
+        id="features"
+      >
         <h2 className="mb-12 text-center text-3xl font-bold text-slate-900 md:text-4xl">
           Built for fairness
         </h2>
@@ -236,7 +269,10 @@ export default function Home() {
       </section>
 
       {/* USE CASES SECTION */}
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+      <section
+        className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8"
+        id="use-cases"
+      >
         <h2 className="mb-12 text-center text-3xl font-bold text-slate-900 md:text-4xl">
           Perfect for every occasion
         </h2>
@@ -288,10 +324,7 @@ export default function Home() {
         <p className="mb-8 text-lg text-slate-600">
           Start using DivvyUp today—free forever.
         </p>
-        <Button size="xl" type="button">
-          Start Splitting Now
-          <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-        </Button>
+        <GettingStartedButton />
       </section>
 
       {/* FOOTER */}
@@ -305,7 +338,7 @@ export default function Home() {
               <p className="text-slate-600">Fair splits, zero hassle.</p>
             </div>
             <div className="flex gap-6">
-              <a
+              {/* <a
                 href="#"
                 className="text-slate-600 transition-colors hover:text-slate-900"
               >
@@ -316,7 +349,7 @@ export default function Home() {
                 className="text-slate-600 transition-colors hover:text-slate-900"
               >
                 Terms
-              </a>
+              </a> */}
             </div>
           </div>
           <div className="border-t border-slate-200 pt-8 text-center text-sm text-slate-600">

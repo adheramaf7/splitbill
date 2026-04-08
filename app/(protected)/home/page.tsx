@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { PlusIcon, UsersRoundIcon } from "lucide-react"
 import Link from "next/link"
-import { getSplitBills } from "../actions/split-bill"
+import { getSplitBills } from "../../actions/split-bill"
 import {
   Empty,
   EmptyContent,
@@ -16,8 +16,7 @@ import { formatNumber } from "@/lib/utils"
 export default async function Page() {
   const splitBills = await getSplitBills()
   return (
-    <main className="relative mx-auto flex min-h-screen max-w-lg flex-col p-4">
-      <h1 className="text-lg font-bold text-primary">Split Biller</h1>
+    <>
       <ul className="mt-4 flex flex-col gap-2">
         {splitBills.length === 0 && (
           <Empty>
@@ -78,6 +77,6 @@ export default async function Page() {
           </Button>
         </Link>
       )}
-    </main>
+    </>
   )
 }
