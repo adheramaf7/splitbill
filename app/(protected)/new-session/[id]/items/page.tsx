@@ -37,11 +37,11 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
           )}
         />
 
-        <div className="mt-4 mb-2 flex flex-col items-center rounded-md bg-secondary p-4 text-secondary-foreground">
-          <p className="text-xs font-medium text-secondary-foreground/50">
+        <div className="mt-4 mb-2 flex flex-col items-center rounded-md bg-gray-200 p-4">
+          <p className="mb-1.5 text-sm font-medium text-muted-foreground">
             Total Bills
           </p>
-          <p className="text-lg font-semibold">
+          <p className="text-2xl font-semibold text-muted-foreground">
             {formatNumber(
               splitBill.billItems.reduce(
                 (acc, item) => acc + Number(item.total),

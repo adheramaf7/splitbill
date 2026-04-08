@@ -1,12 +1,17 @@
 'use server';
 
 import { db } from "@/db";
-import { billAdjustments, billItemParticipants, billItems, billParticipants, splitBills } from "@/db/schema";
-import { eq, inArray } from "drizzle-orm";
+import { billAdjustments, billItems, billParticipants, splitBills } from "@/db/schema";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
+import { getAuthSession } from "./session";
 
 export async function createSplitBill(formData: FormData) {
+  const session = await getAuthSession();
+  if (!session?.session) {
+    throw new Error('Unauthenticated');
+  }
 
   const billName = formData.get('name') as string;
   const date = formData.get('date') as string;
@@ -16,6 +21,7 @@ export async function createSplitBill(formData: FormData) {
     date: new Date(date),
     total: '0',
     isDraft: true,
+    userId: session.user.id,
   }).returning();
 
   const splitBill = results[0];
@@ -83,11 +89,25 @@ export async function lockSplitBill(id: string) {
   redirect(`/split-bill/${id}`);
 }
 
-export async function getSplitBills() {
+export type SplitBillStatus = 'draft' | 'completed' | 'all';
+export async function getSplitBills({ status }: { status: SplitBillStatus }) {
+  const session = await getAuthSession();
+
+  if (!session?.session) {
+    throw new Error('Unauthenticated');
+  }
+
   const result = await db.query.splitBills.findMany({
+    where: and(
+      eq(splitBills.userId, session.user.id),
+      status === 'draft' ? eq(splitBills.isDraft, true) : undefined,
+      status === 'completed' ? eq(splitBills.isDraft, false) : undefined,
+    ),
     with: {
       billParticipants: true,
     },
+    orderBy: (splitBills, { desc }) => [desc(splitBills.createdAt)],
   });
+
   return result;
 }

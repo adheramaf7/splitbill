@@ -1,71 +1,69 @@
+import { Suspense } from "react"
+import { SessionHistory } from "./components/session-history"
+import { SessionItemSkeleton } from "./components/session-item-skeleton"
+import { SplitBillStatus } from "@/app/actions/split-bill"
 import { Button } from "@/components/ui/button"
-import { PlusIcon, UsersRoundIcon } from "lucide-react"
 import Link from "next/link"
-import { getSplitBills } from "../../actions/split-bill"
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/components/ui/empty"
-import { ListXIcon } from "lucide-react"
-import { formatNumber } from "@/lib/utils"
+import { PlusIcon } from "lucide-react"
 
-export default async function Page() {
-  const splitBills = await getSplitBills()
+type Props = {
+  searchParams: Promise<{ status: SplitBillStatus }>
+}
+
+export default async function Page({ searchParams }: Props) {
+  const { status = "all" } = await searchParams
+
   return (
     <>
-      <ul className="mt-4 flex w-full flex-col gap-2">
-        {splitBills.length === 0 && (
-          <Empty>
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <ListXIcon />
-              </EmptyMedia>
-              <EmptyTitle>No Split Bill History</EmptyTitle>
-              <EmptyDescription>
-                You haven&apos;t created any split bills yet..
-              </EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent className="flex-row justify-center gap-2">
-              <Link href={"/new-session"}>
-                <Button type="button">Start Your First Session</Button>
-              </Link>
-            </EmptyContent>
-          </Empty>
-        )}
-        {splitBills.map((splitBill) => (
-          <li
-            key={splitBill.id}
-            className="group overflow-hidden rounded-md border transition-opacity odd:border-l-4 odd:border-l-primary odd:bg-white even:bg-gray-50 hover:opacity-80"
+      <div className="grid grid-cols-3 gap-3 rounded-md border bg-gray-100 p-0">
+        <Link href="/home?status=all">
+          <Button
+            type="button"
+            className="w-full"
+            variant={status === "all" ? "secondary" : "ghost"}
           >
-            <Link
-              href={`/split-bill/${splitBill.id}`}
-              className="flex h-full w-full flex-col p-2"
-            >
-              <div className="flex flex-row items-start justify-between">
-                <div>
-                  <p className="text-lg font-semibold">{splitBill.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {splitBill.date.toDateString()}
-                  </p>
-                </div>
-                <div className="text-xl font-bold tracking-wide text-primary">
-                  {formatNumber(Number(splitBill.grandTotal))}
-                </div>
-              </div>
-              <div className="flex flex-row">
-                <div className="mt-2 flex flex-row items-center justify-center gap-2 rounded bg-gray-200 px-2 py-1 text-xs font-semibold text-muted-foreground">
-                  <UsersRoundIcon className="text-muted-foregroun size-3" />{" "}
-                  Split by {splitBill.billParticipants.length}
-                </div>
-              </div>
-            </Link>
-          </li>
-        ))}
-      </ul>
+            All
+          </Button>
+        </Link>
+        <Link href="/home?status=completed">
+          <Button
+            type="button"
+            variant={status === "completed" ? "secondary" : "ghost"}
+            className="w-full"
+          >
+            Completed
+          </Button>
+        </Link>
+        <Link href="/home?status=draft">
+          <Button
+            type="button"
+            variant={status === "draft" ? "secondary" : "ghost"}
+            className="w-full"
+          >
+            Draft
+          </Button>
+        </Link>
+      </div>
+      <Suspense
+        fallback={
+          <ul className="mt-4 flex w-full flex-col gap-2">
+            <SessionItemSkeleton />
+            <SessionItemSkeleton />
+            <SessionItemSkeleton />
+            <SessionItemSkeleton />
+            <SessionItemSkeleton />
+          </ul>
+        }
+      >
+        <SessionHistory status={status} />
+      </Suspense>
+      <div className="absolute right-4 bottom-4">
+        <Link href={"/new-session"}>
+          <Button type="button" size={"xl"}>
+            <PlusIcon /> Create New Session
+          </Button>
+        </Link>
+      </div>
     </>
   )
 }

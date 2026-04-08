@@ -115,7 +115,7 @@ const ParticipantItem = ({ participant }: { participant: BillParticipant }) => {
       <Button
         type="button"
         size={"icon-sm"}
-        variant={"secondary"}
+        variant={"outline"}
         disabled={deletePending}
         onClick={() => startTransition(() => deleteAction(participant.id))}
       >

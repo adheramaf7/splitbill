@@ -8,4 +8,5 @@ export const db = drizzle({
     connectionString: process.env.DATABASE_URL!,
   },
   casing: 'snake_case',
+  logger: process.env.NODE_ENV === 'development',
 });

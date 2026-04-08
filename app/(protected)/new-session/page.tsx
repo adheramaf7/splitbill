@@ -37,7 +37,8 @@ const Page = () => {
             />
           </Field>
           <SubmitButton loadingText="Creating...">
-            <ArrowRightIcon /> Create New Session
+            Next
+            <ArrowRightIcon />
           </SubmitButton>
         </FieldGroup>
       </form>
