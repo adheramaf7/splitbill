@@ -5,6 +5,7 @@ import { PercentCircleIcon, ReceiptIcon } from "lucide-react"
 import Link from "next/link"
 import ParticipantSummaryCard from "@/components/participant-summary-card"
 import { InitialLogo } from "@/components/initial-logo"
+import { notFound } from "next/navigation"
 
 const APP_NAME = process.env.APP_NAME || "APP_NAME"
 
@@ -12,6 +13,11 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params
 
   const splitBill = await getSplitBillById(id)
+
+  if (splitBill.isDraft) {
+    return notFound()
+  }
+
   const billItemParticipants = await getBillItemParticipantBySplitBillId(id)
 
   return (
