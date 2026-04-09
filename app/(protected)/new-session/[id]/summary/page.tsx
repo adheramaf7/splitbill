@@ -11,7 +11,7 @@ import { determineAllocationStatusItem } from "../allocation/components/allocati
 import { getBillItemParticipantBySplitBillId } from "@/app/actions/bill-item-participant"
 import { formatNumber } from "@/lib/utils"
 
-import ParticipantSummaryCard from "./components/participant-summary-card"
+import ParticipantSummaryCard from "../../../../../components/participant-summary-card"
 import { Metadata } from "next"
 import SubmitButton from "../../components/submit-button"
 import Link from "next/link"

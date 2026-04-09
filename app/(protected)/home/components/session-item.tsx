@@ -18,7 +18,7 @@ export const SessionItem = ({
 
   return (
     <li
-      className="group flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-md border p-2 transition-opacity odd:border-l-4 odd:border-l-primary odd:bg-white even:bg-gray-50 hover:opacity-80"
+      className="group flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-md border p-3 transition-opacity odd:border-l-4 odd:border-l-primary odd:bg-white even:bg-gray-50 hover:opacity-80 md:px-5 md:py-3"
       onClick={() =>
         router.push(
           splitBill.isDraft
