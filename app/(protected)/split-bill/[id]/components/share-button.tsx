@@ -26,7 +26,7 @@ export const ShareButton = ({ splitBill }: Props) => {
   }
 
   return (
-    <Button type="button" size={"xl"} onClick={handleClick}>
+    <Button type="button" size={"xl"} onClick={handleClick} className="w-full">
       <Share2Icon /> Share
     </Button>
   )

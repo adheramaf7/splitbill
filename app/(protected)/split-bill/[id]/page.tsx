@@ -3,6 +3,7 @@ import { Metadata } from "next"
 import ParticipantSummaryCard from "../../../../components/participant-summary-card"
 import {
   ArrowLeftIcon,
+  DownloadIcon,
   PercentCircleIcon,
   ReceiptIcon,
   Share2Icon,
@@ -12,6 +13,7 @@ import { getSplitBillById } from "@/app/actions/split-bill"
 import { getBillItemParticipantBySplitBillId } from "@/app/actions/bill-item-participant"
 import { Button } from "@/components/ui/button"
 import { ShareButton } from "./components/share-button"
+import { DownloadButton } from "./components/download-button"
 
 export const metadata: Metadata = {
   title: "Summary",
@@ -80,7 +82,12 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
           </div>
         </div>
       </section>
-      <ShareButton splitBill={splitBill} />
+      <div className="flex flex-row items-center gap-2">
+        <div className="flex-1">
+          <ShareButton splitBill={splitBill} />
+        </div>
+        <DownloadButton splitBill={splitBill} />
+      </div>
     </>
   )
 }
