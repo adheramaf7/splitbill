@@ -1,11 +1,19 @@
 import Link from "next/link"
 import { Metadata } from "next"
-import ParticipantSummaryCard from "../../new-session/[id]/summary/components/participant-summary-card"
-import { ArrowLeftIcon, PercentCircleIcon, ReceiptIcon } from "lucide-react"
+import ParticipantSummaryCard from "../../../../components/participant-summary-card"
+import {
+  ArrowLeftIcon,
+  DownloadIcon,
+  PercentCircleIcon,
+  ReceiptIcon,
+  Share2Icon,
+} from "lucide-react"
 import { formatDate, formatNumber } from "@/lib/utils"
 import { getSplitBillById } from "@/app/actions/split-bill"
 import { getBillItemParticipantBySplitBillId } from "@/app/actions/bill-item-participant"
 import { Button } from "@/components/ui/button"
+import { ShareButton } from "./components/share-button"
+import { DownloadButton } from "./components/download-button"
 
 export const metadata: Metadata = {
   title: "Summary",
@@ -74,6 +82,12 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
           </div>
         </div>
       </section>
+      <div className="flex flex-row items-center gap-2">
+        <div className="flex-1">
+          <ShareButton splitBill={splitBill} />
+        </div>
+        <DownloadButton splitBill={splitBill} />
+      </div>
     </>
   )
 }
